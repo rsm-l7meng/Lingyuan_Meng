@@ -11,6 +11,10 @@ website:
         text: Meng
       - href: resume.qmd  # <-- add this
         text: Resume      # <-- add this
+      - href: projects.qmd
+        text: Projects
+      - href: projects/project1/index.qmd
+        text: HW1
 
 
 format:

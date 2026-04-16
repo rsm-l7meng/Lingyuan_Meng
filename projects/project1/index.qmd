@@ -251,17 +251,67 @@ The full regression output also shows that the treatment effect estimate, its st
 
 ## The Problem with Peeking
 
-::: {.callout-note}
-- Your boss is impatient. Rather than waiting until all 1,000 visitors have been assigned to each group, she wants to run the hypothesis test after every 100 visitors per group — peeking at the results after 100, 200, 300, ..., up to 1,000 visitors per group (10 tests in total). If any of those tests comes back significant at the $\alpha = 0.05$ level, she wants to declare a winner and stop the experiment early.
+One important problem in experimentation is peeking at the data too often. Suppose the true conversion rates are actually the same, so there is no real treatment effect. If I run a hypothesis test only once at the end of the experiment, the probability of a false positive is about 5% when I use a 5% significance level. But if I repeatedly check the results during the experiment and stop as soon as I see significance, the overall false positive rate becomes much larger.
 
-- Explain to the reader why this is problematic under classical frequentist statistics. The key issue is that a single test at $\alpha = 0.05$ has a 5% chance of a false positive (rejecting $H_0$ when it is actually true). But when you conduct multiple tests on accumulating data, each peek is another opportunity to get a false positive. The overall probability of at least one false rejection across all the peeks is much higher than 5%.
+To demonstrate this, I simulate many experiments under the null hypothesis where both CTAs have the same sign-up probability of 0.20. In each experiment, I check for significance after every 100 observations per group, up to 1,000 observations per group. If any of those interim tests is significant at the 5% level, I count the experiment as producing a false positive.
 
-- Demonstrate this with a simulation. The idea is as follows:
+```{python}
+np.random.seed(123)
 
-    1. Set up a world where the null hypothesis is true: $\pi_A = \pi_B = 0.20$ (i.e., $\theta = 0$, there is no difference between the CTAs).
-    2. Simulate a single experiment: draw 1,000 observations for group A and 1,000 for group B. After every 100 observations per group (at $n = 100, 200, \ldots, 1000$), compute the z-statistic and p-value. Record whether any of the 10 p-values falls below 0.05.
-    3. Repeat step 2 a total of 10,000 times to simulate 10,000 experiments.
-    4. Compute the fraction of those 10,000 experiments in which at least one peek produced a significant result. This is the empirical false positive rate under peeking.
+pi_null = 0.20
+n_total = 1000
+checkpoints = np.arange(100, n_total + 1, 100)
+n_experiments = 10000
 
-- Compare this to the nominal 5% false positive rate of a single test. Report the result and explain to the reader why peeking inflates the Type I error rate and what this means in practice for running A/B tests.
-:::
+false_positive_any = 0
+
+for _ in range(n_experiments):
+    A_null = np.random.binomial(1, pi_null, n_total)
+    B_null = np.random.binomial(1, pi_null, n_total)
+    
+    rejected = False
+    
+    for m in checkpoints:
+        A_m = A_null[:m]
+        B_m = B_null[:m]
+        
+        theta_hat_m = A_m.mean() - B_m.mean()
+        se_m = np.sqrt(A_m.mean() * (1 - A_m.mean()) / m + B_m.mean() * (1 - B_m.mean()) / m)
+        
+        if se_m > 0:
+            z_m = theta_hat_m / se_m
+            p_m = 2 * (1 - stats.norm.cdf(abs(z_m)))
+            
+            if p_m < 0.05:
+                rejected = True
+                break
+    
+    if rejected:
+        false_positive_any += 1
+
+false_positive_rate = false_positive_any / n_experiments
+
+peeking_results = pd.DataFrame({
+    "Quantity": ["Nominal significance level", "False positive rate with repeated peeking"],
+    "Value": [0.05, false_positive_rate]
+})
+
+peeking_results
+```
+
+To make the comparison more intuitive, I also plot the nominal 5% level against the simulated false positive rate under repeated peeking.
+
+```{python}
+comparison_df = pd.DataFrame({
+    "Type": ["Nominal 5% level", "Repeated peeking false positive rate"],
+    "Rate": [0.05, false_positive_rate]
+})
+
+plt.figure(figsize=(8, 5))
+plt.bar(comparison_df["Type"], comparison_df["Rate"], edgecolor="black")
+plt.ylabel("Probability")
+plt.title("False Positive Rate: Single Test vs. Repeated Peeking")
+plt.show()
+```
+
+The simulation shows that repeated peeking makes false positives more likely. Even when there is no true difference between the two CTAs, checking the data over and over again creates more opportunities to incorrectly reject the null hypothesis. This is why classical hypothesis testing assumes that the testing plan is fixed in advance. If researchers want to monitor results during the experiment, they usually need special sequential testing methods rather than ordinary repeated hypothesis tests.
