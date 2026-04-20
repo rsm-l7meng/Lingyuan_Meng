@@ -11,4 +11,41 @@ about:
       href: https://www.linkedin.com/in/lingyuan-meng-ucsdba
 ---
 
-Welcome to my website!
+::: {.hero-intro}
+<div class="hero-line-1">UC San Diego MSBA</div>
+<div class="hero-line-2">Business Analytics | Strategy | Problem Solving</div>
+:::
+
+I am an international student from China who has been studying in the United States since high school.
+
+My cross-cultural experience has helped me develop adaptability, independence, and strong communication skills. I am especially interested in business analytics, strategy, and solving real-world problems with practical ideas and data-driven thinking.
+
+::: {.feature-grid}
+
+::: {.feature-card}
+### Global Perspective
+Experienced in adapting to new environments and working across different cultural backgrounds.
+:::
+
+::: {.feature-card}
+### Analytical Mindset
+Interested in business analytics, problem-solving, and turning ideas into practical results.
+:::
+
+::: {.feature-card}
+### Team-Oriented
+Enjoy collaborating with others, learning from different perspectives, and contributing to shared goals.
+:::
+
+:::
+
+## Beyond Academics
+Outside of school and work, I enjoy playing video games with friends and staying active through outdoor sports. These activities help me stay balanced, curious, and connected with others.
+
+## Current Focus
+Exploring opportunities in business analytics, consulting, and strategy-related roles.
+
+::: {.home-buttons}
+[View Resume](resume.qmd){.btn-home}
+[Visit Blog](blog/index.qmd){.btn-home}
+:::

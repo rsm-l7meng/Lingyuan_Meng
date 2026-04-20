@@ -1,0 +1,12 @@
+---
+title: "Blog"
+format: html
+---
+
+# Blog
+
+Welcome to my blog. Here you can find my posts and course-related writing.
+
+## Posts
+
+- [A/B Testing a Call to Action](ab-testing-call-to-action.qmd) 

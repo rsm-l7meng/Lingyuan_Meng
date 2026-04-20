@@ -1,29 +1,29 @@
 project:
   type: website
-  output-dir: docs  # <-- add this
-
+  output-dir: docs
 
 website:
   title: "Lingyuan Meng"
   navbar:
     left:
       - href: index.qmd
-        text: Meng
-      - href: resume.qmd  # <-- add this
-        text: Resume      # <-- add this
-      - href: projects.qmd
-        text: Projects
-      - href: projects/project1/index.qmd
-        text: HW1
+        text: Home
+      - href: resume.qmd
+        text: Resume
+      - text: Blog
+        href: blog/index.qmd
 
+  sidebar:
+    - title: "Blog"
+      style: "docked"
+      search: false
+      contents:
+        - blog/index.qmd
+        - blog/ab-testing-call-to-action.qmd
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: cosmo
     css: styles.css
     toc: true
-
-
 

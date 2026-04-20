@@ -1,31 +1,10 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Lingyuan Meng",
-    "section": "",
-    "text": "Welcome to my website!"
-  },
-  {
     "objectID": "resume.html",
     "href": "resume.html",
     "title": "My Resume",
     "section": "",
     "text": "Download PDF file."
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
-  },
-  {
-    "objectID": "projects.html",
-    "href": "projects.html",
-    "title": "My Projects",
-    "section": "",
-    "text": "A/B Testing a Call to Action\n\n\n\n\n\n\nLingyuan Meng\n\n\nApr 15, 2026\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects/project1/index.html",
@@ -88,13 +67,178 @@
     "href": "projects/project1/index.html#the-t-test-as-a-regression",
     "title": "A/B Testing a Call to Action",
     "section": "The T-Test as a Regression",
-    "text": "The T-Test as a Regression\nThe difference in means from an A/B test can also be written as a regression. To do this, I stack the two groups together into one dataset and create a treatment indicator equal to 1 for CTA A and 0 for CTA B. I then run the following regression:\n\\[\nY_i = \\beta_0 + \\beta_1 D_i + \\varepsilon_i\n\\]\nwhere \\(Y_i\\) is the sign-up outcome and \\(D_i\\) indicates whether the visitor saw CTA A. In this setup, the intercept \\(\\beta_0\\) is the mean outcome for group B, and the coefficient \\(\\beta_1\\) is the difference in mean outcomes between group A and group B. That means the regression coefficient on the treatment indicator should match the estimated treatment effect from the A/B test.\n\nimport statsmodels.api as sm\n\nreg_df = pd.DataFrame({\n    \"signup\": np.concatenate([A, B]),\n    \"treatment\": np.concatenate([np.ones(n), np.zeros(n)])\n})\n\nX = sm.add_constant(reg_df[\"treatment\"])\nreg_model = sm.OLS(reg_df[\"signup\"], X).fit()\n\nregression_results = pd.DataFrame({\n    \"Quantity\": [\"Difference in means\", \"Regression coefficient on treatment\", \"Regression SE\", \"Regression p-value\"],\n    \"Value\": [theta_hat, reg_model.params[\"treatment\"], reg_model.bse[\"treatment\"], reg_model.pvalues[\"treatment\"]]\n})\n\nregression_results\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nDifference in means\n0.038000\n\n\n1\nRegression coefficient on treatment\n0.038000\n\n\n2\nRegression SE\n0.017776\n\n\n3\nRegression p-value\n0.032658\n\n\n\n\n\n\n\nThe regression coefficient on the treatment indicator matches the difference in sample means, which confirms that the t-test and the regression are giving the same substantive result in this simple setting. This equivalence matters because regression provides a flexible framework: once the basic A/B test is written this way, it becomes easy to extend the analysis by adding controls, interactions, or additional treatment groups.\n\nreg_model.summary()\n\n\nOLS Regression Results\n\n\nDep. Variable:\nsignup\nR-squared:\n0.002\n\n\nModel:\nOLS\nAdj. R-squared:\n0.002\n\n\nMethod:\nLeast Squares\nF-statistic:\n4.570\n\n\nDate:\nWed, 15 Apr 2026\nProb (F-statistic):\n0.0327\n\n\nTime:\n23:42:04\nLog-Likelihood:\n-991.64\n\n\nNo. Observations:\n2000\nAIC:\n1987.\n\n\nDf Residuals:\n1998\nBIC:\n1998.\n\n\nDf Model:\n1\n\n\n\n\nCovariance Type:\nnonrobust\n\n\n\n\n\n\n\n\n\n\n\ncoef\nstd err\nt\nP&gt;|t|\n[0.025\n0.975]\n\n\nconst\n0.1780\n0.013\n14.161\n0.000\n0.153\n0.203\n\n\ntreatment\n0.0380\n0.018\n2.138\n0.033\n0.003\n0.073\n\n\n\n\n\n\n\n\nOmnibus:\n434.378\nDurbin-Watson:\n1.932\n\n\nProb(Omnibus):\n0.000\nJarque-Bera (JB):\n777.046\n\n\nSkew:\n1.518\nProb(JB):\n1.85e-169\n\n\nKurtosis:\n3.320\nCond. No.\n2.62\n\n\n\nNotes:[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n\n\nThe full regression output also shows that the treatment effect estimate, its standard error, and the p-value line up closely with the earlier hypothesis test results. In this example, regression is not changing the answer; it is simply expressing the same comparison in a more general statistical framework."
+    "text": "The T-Test as a Regression\nThe difference in means from an A/B test can also be written as a regression. To do this, I stack the two groups together into one dataset and create a treatment indicator equal to 1 for CTA A and 0 for CTA B. I then run the following regression:\n\\[\nY_i = \\beta_0 + \\beta_1 D_i + \\varepsilon_i\n\\]\nwhere \\(Y_i\\) is the sign-up outcome and \\(D_i\\) indicates whether the visitor saw CTA A. In this setup, the intercept \\(\\beta_0\\) is the mean outcome for group B, and the coefficient \\(\\beta_1\\) is the difference in mean outcomes between group A and group B. That means the regression coefficient on the treatment indicator should match the estimated treatment effect from the A/B test.\n\nimport statsmodels.api as sm\n\nreg_df = pd.DataFrame({\n    \"signup\": np.concatenate([A, B]),\n    \"treatment\": np.concatenate([np.ones(n), np.zeros(n)])\n})\n\nX = sm.add_constant(reg_df[\"treatment\"])\nreg_model = sm.OLS(reg_df[\"signup\"], X).fit()\n\nregression_results = pd.DataFrame({\n    \"Quantity\": [\"Difference in means\", \"Regression coefficient on treatment\", \"Regression SE\", \"Regression p-value\"],\n    \"Value\": [theta_hat, reg_model.params[\"treatment\"], reg_model.bse[\"treatment\"], reg_model.pvalues[\"treatment\"]]\n})\n\nregression_results\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nDifference in means\n0.038000\n\n\n1\nRegression coefficient on treatment\n0.038000\n\n\n2\nRegression SE\n0.017776\n\n\n3\nRegression p-value\n0.032658\n\n\n\n\n\n\n\nThe regression coefficient on the treatment indicator matches the difference in sample means, which confirms that the t-test and the regression are giving the same substantive result in this simple setting. This equivalence matters because regression provides a flexible framework: once the basic A/B test is written this way, it becomes easy to extend the analysis by adding controls, interactions, or additional treatment groups.\n\nreg_model.summary()\n\n\nOLS Regression Results\n\n\nDep. Variable:\nsignup\nR-squared:\n0.002\n\n\nModel:\nOLS\nAdj. R-squared:\n0.002\n\n\nMethod:\nLeast Squares\nF-statistic:\n4.570\n\n\nDate:\nMon, 20 Apr 2026\nProb (F-statistic):\n0.0327\n\n\nTime:\n00:44:38\nLog-Likelihood:\n-991.64\n\n\nNo. Observations:\n2000\nAIC:\n1987.\n\n\nDf Residuals:\n1998\nBIC:\n1998.\n\n\nDf Model:\n1\n\n\n\n\nCovariance Type:\nnonrobust\n\n\n\n\n\n\n\n\n\n\n\ncoef\nstd err\nt\nP&gt;|t|\n[0.025\n0.975]\n\n\nconst\n0.1780\n0.013\n14.161\n0.000\n0.153\n0.203\n\n\ntreatment\n0.0380\n0.018\n2.138\n0.033\n0.003\n0.073\n\n\n\n\n\n\n\n\nOmnibus:\n434.378\nDurbin-Watson:\n1.932\n\n\nProb(Omnibus):\n0.000\nJarque-Bera (JB):\n777.046\n\n\nSkew:\n1.518\nProb(JB):\n1.85e-169\n\n\nKurtosis:\n3.320\nCond. No.\n2.62\n\n\n\nNotes:[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n\n\nThe full regression output also shows that the treatment effect estimate, its standard error, and the p-value line up closely with the earlier hypothesis test results. In this example, regression is not changing the answer; it is simply expressing the same comparison in a more general statistical framework."
   },
   {
     "objectID": "projects/project1/index.html#the-problem-with-peeking",
     "href": "projects/project1/index.html#the-problem-with-peeking",
     "title": "A/B Testing a Call to Action",
     "section": "The Problem with Peeking",
-    "text": "The Problem with Peeking\n\n\n\n\n\n\nNote\n\n\n\n\nYour boss is impatient. Rather than waiting until all 1,000 visitors have been assigned to each group, she wants to run the hypothesis test after every 100 visitors per group — peeking at the results after 100, 200, 300, …, up to 1,000 visitors per group (10 tests in total). If any of those tests comes back significant at the \\(\\alpha = 0.05\\) level, she wants to declare a winner and stop the experiment early.\nExplain to the reader why this is problematic under classical frequentist statistics. The key issue is that a single test at \\(\\alpha = 0.05\\) has a 5% chance of a false positive (rejecting \\(H_0\\) when it is actually true). But when you conduct multiple tests on accumulating data, each peek is another opportunity to get a false positive. The overall probability of at least one false rejection across all the peeks is much higher than 5%.\nDemonstrate this with a simulation. The idea is as follows:\n\nSet up a world where the null hypothesis is true: \\(\\pi_A = \\pi_B = 0.20\\) (i.e., \\(\\theta = 0\\), there is no difference between the CTAs).\nSimulate a single experiment: draw 1,000 observations for group A and 1,000 for group B. After every 100 observations per group (at \\(n = 100, 200, \\ldots, 1000\\)), compute the z-statistic and p-value. Record whether any of the 10 p-values falls below 0.05.\nRepeat step 2 a total of 10,000 times to simulate 10,000 experiments.\nCompute the fraction of those 10,000 experiments in which at least one peek produced a significant result. This is the empirical false positive rate under peeking.\n\nCompare this to the nominal 5% false positive rate of a single test. Report the result and explain to the reader why peeking inflates the Type I error rate and what this means in practice for running A/B tests."
+    "text": "The Problem with Peeking\nOne important problem in experimentation is peeking at the data too often. Suppose the true conversion rates are actually the same, so there is no real treatment effect. If I run a hypothesis test only once at the end of the experiment, the probability of a false positive is about 5% when I use a 5% significance level. But if I repeatedly check the results during the experiment and stop as soon as I see significance, the overall false positive rate becomes much larger.\nTo demonstrate this, I simulate many experiments under the null hypothesis where both CTAs have the same sign-up probability of 0.20. In each experiment, I check for significance after every 100 observations per group, up to 1,000 observations per group. If any of those interim tests is significant at the 5% level, I count the experiment as producing a false positive.\n\nnp.random.seed(123)\n\npi_null = 0.20\nn_total = 1000\ncheckpoints = np.arange(100, n_total + 1, 100)\nn_experiments = 10000\n\nfalse_positive_any = 0\n\nfor _ in range(n_experiments):\n    A_null = np.random.binomial(1, pi_null, n_total)\n    B_null = np.random.binomial(1, pi_null, n_total)\n    \n    rejected = False\n    \n    for m in checkpoints:\n        A_m = A_null[:m]\n        B_m = B_null[:m]\n        \n        theta_hat_m = A_m.mean() - B_m.mean()\n        se_m = np.sqrt(A_m.mean() * (1 - A_m.mean()) / m + B_m.mean() * (1 - B_m.mean()) / m)\n        \n        if se_m &gt; 0:\n            z_m = theta_hat_m / se_m\n            p_m = 2 * (1 - stats.norm.cdf(abs(z_m)))\n            \n            if p_m &lt; 0.05:\n                rejected = True\n                break\n    \n    if rejected:\n        false_positive_any += 1\n\nfalse_positive_rate = false_positive_any / n_experiments\n\npeeking_results = pd.DataFrame({\n    \"Quantity\": [\"Nominal significance level\", \"False positive rate with repeated peeking\"],\n    \"Value\": [0.05, false_positive_rate]\n})\n\npeeking_results\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nNominal significance level\n0.050\n\n\n1\nFalse positive rate with repeated peeking\n0.199\n\n\n\n\n\n\n\nTo make the comparison more intuitive, I also plot the nominal 5% level against the simulated false positive rate under repeated peeking.\n\ncomparison_df = pd.DataFrame({\n    \"Type\": [\"Nominal 5% level\", \"Repeated peeking false positive rate\"],\n    \"Rate\": [0.05, false_positive_rate]\n})\n\nplt.figure(figsize=(8, 5))\nplt.bar(comparison_df[\"Type\"], comparison_df[\"Rate\"], edgecolor=\"black\")\nplt.ylabel(\"Probability\")\nplt.title(\"False Positive Rate: Single Test vs. Repeated Peeking\")\nplt.show()\n\n\n\n\n\n\n\n\nThe simulation shows that repeated peeking makes false positives more likely. Even when there is no true difference between the two CTAs, checking the data over and over again creates more opportunities to incorrectly reject the null hypothesis. This is why classical hypothesis testing assumes that the testing plan is fixed in advance. If researchers want to monitor results during the experiment, they usually need special sequential testing methods rather than ordinary repeated hypothesis tests."
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Welcome to my blog. Here you can find my posts and course-related writing.\n\n\n\nA/B Testing a Call to Action",
+    "crumbs": [
+      "Blog"
+    ]
+  },
+  {
+    "objectID": "blog/index.html#posts",
+    "href": "blog/index.html#posts",
+    "title": "Blog",
+    "section": "",
+    "text": "A/B Testing a Call to Action",
+    "crumbs": [
+      "Blog"
+    ]
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html",
+    "href": "blog/ab-testing-call-to-action.html",
+    "title": "A/B Testing a Call to Action",
+    "section": "",
+    "text": "Suppose I manage a website with a landing page that invites visitors to sign up for a newsletter. I want to know whether the wording of the call to action affects whether visitors subscribe. In this experiment, CTA A says “Sign up for our newsletter here!” while CTA B says “Stay up to date by signing up!” Visitors are randomly assigned to see one of the two versions, and I compare the sign-up rates between the groups.\nThis is a standard A/B test. The goal is to estimate whether one version of the message leads to a higher conversion rate than the other. More broadly, this example provides a useful setting for understanding several key ideas in frequentist statistics, including simulation, the law of large numbers, the bootstrap, hypothesis testing, and the risks of repeated peeking at the data.",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#introduction",
+    "href": "blog/ab-testing-call-to-action.html#introduction",
+    "title": "A/B Testing a Call to Action",
+    "section": "",
+    "text": "Suppose I manage a website with a landing page that invites visitors to sign up for a newsletter. I want to know whether the wording of the call to action affects whether visitors subscribe. In this experiment, CTA A says “Sign up for our newsletter here!” while CTA B says “Stay up to date by signing up!” Visitors are randomly assigned to see one of the two versions, and I compare the sign-up rates between the groups.\nThis is a standard A/B test. The goal is to estimate whether one version of the message leads to a higher conversion rate than the other. More broadly, this example provides a useful setting for understanding several key ideas in frequentist statistics, including simulation, the law of large numbers, the bootstrap, hypothesis testing, and the risks of repeated peeking at the data.",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#the-ab-test-as-a-statistical-problem",
+    "href": "blog/ab-testing-call-to-action.html#the-ab-test-as-a-statistical-problem",
+    "title": "A/B Testing a Call to Action",
+    "section": "The A/B Test as a Statistical Problem",
+    "text": "The A/B Test as a Statistical Problem\nEach visitor either signs up for the newsletter or does not, so the outcome for each person is binary. Because of this, each observation can be modeled as a Bernoulli random variable with a success probability equal to the probability of signing up.\nLet \\(\\pi_A\\) represent the probability of signing up under CTA A, and let \\(\\pi_B\\) represent the probability of signing up under CTA B. The main parameter of interest is the difference in conversion rates:\n\\[\n\\theta = \\pi_A - \\pi_B\n\\]\nIn the sample, I estimate this quantity using the difference in observed sign-up proportions:\n\\[\n\\hat{\\theta} = \\bar{X}_A - \\bar{X}_B\n\\]\nSince the outcome is either 0 or 1, the sample mean in each group is just the proportion of visitors who signed up. This makes the difference in sample means a natural estimator for the treatment effect in this A/B test.",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#simulating-data",
+    "href": "blog/ab-testing-call-to-action.html#simulating-data",
+    "title": "A/B Testing a Call to Action",
+    "section": "Simulating Data",
+    "text": "Simulating Data\nIn a real A/B test, the true conversion rates would be unknown. However, simulation is useful because it allows me to study how the estimator behaves when the true values are known. For this exercise, I assume that the sign-up probability under CTA A is \\(\\pi_A = 0.22\\) and the sign-up probability under CTA B is \\(\\pi_B = 0.18\\). This means the true treatment effect is:\n\\[\n\\theta = 0.22 - 0.18 = 0.04\n\\]\nUsing these values, I simulate 1,000 visitors in each group and compare the observed conversion rates.\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom scipy import stats\n\nnp.random.seed(42)\n\npi_A = 0.22\npi_B = 0.18\nn = 1000\n\nA = np.random.binomial(1, pi_A, n)\nB = np.random.binomial(1, pi_B, n)\n\ntheta_hat = A.mean() - B.mean()\n\nsummary_df = pd.DataFrame({\n    \"Group\": [\"CTA A\", \"CTA B\"],\n    \"Signup Rate\": [A.mean(), B.mean()]\n})\n\nsummary_df\n\n\n\n\n\n\n\n\nGroup\nSignup Rate\n\n\n\n\n0\nCTA A\n0.216\n\n\n1\nCTA B\n0.178",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#the-law-of-large-numbers",
+    "href": "blog/ab-testing-call-to-action.html#the-law-of-large-numbers",
+    "title": "A/B Testing a Call to Action",
+    "section": "The Law of Large Numbers",
+    "text": "The Law of Large Numbers\nThe Law of Large Numbers says that as the sample size grows, the sample average gets closer to the true population average. In this A/B test, that means the estimated treatment effect should move closer to the true difference in conversion rates as more observations are included. With only a few observations, the estimate can fluctuate a lot, but with a larger sample it becomes more stable.\nTo illustrate this, I compute the element-wise differences between the simulated outcomes in group A and group B, then calculate the cumulative average of those differences. If the Law of Large Numbers is working as expected, the running mean should gradually settle near the true treatment effect of 0.04.\n\ndiffs = A - B\nrunning_mean = np.cumsum(diffs) / np.arange(1, n + 1)\n\nplt.figure(figsize=(10, 5))\nplt.plot(np.arange(1, n + 1), running_mean, label=\"Running mean of A - B\")\nplt.axhline(0.04, linestyle=\"--\", label=\"True treatment effect = 0.04\")\nplt.xlabel(\"Number of observations\")\nplt.ylabel(\"Cumulative average\")\nplt.title(\"Law of Large Numbers in the A/B Test\")\nplt.legend()\nplt.show()",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#bootstrap-standard-errors",
+    "href": "blog/ab-testing-call-to-action.html#bootstrap-standard-errors",
+    "title": "A/B Testing a Call to Action",
+    "section": "Bootstrap Standard Errors",
+    "text": "Bootstrap Standard Errors\nA point estimate by itself does not tell us how precise the estimated treatment effect is. To measure uncertainty, I use the bootstrap. The basic idea is to repeatedly resample with replacement from the observed data in each group, recompute the estimated treatment effect each time, and then use the spread of those bootstrap estimates to approximate the standard error.\nI generate 1,000 bootstrap replications. In each replication, I sample 1,000 observations with replacement from group A and 1,000 observations with replacement from group B, then calculate the difference in sample means. The standard deviation of these bootstrap estimates is the bootstrap standard error.\n\nn_boot = 1000\nboot_thetas = np.empty(n_boot)\n\nfor i in range(n_boot):\n    A_boot = np.random.choice(A, size=n, replace=True)\n    B_boot = np.random.choice(B, size=n, replace=True)\n    boot_thetas[i] = A_boot.mean() - B_boot.mean()\n\nboot_se = boot_thetas.std(ddof=1)\n\nanalytic_se = np.sqrt(A.mean() * (1 - A.mean()) / n + B.mean() * (1 - B.mean()) / n)\n\nci_lower = theta_hat - 1.96 * boot_se\nci_upper = theta_hat + 1.96 * boot_se\n\nbootstrap_results = pd.DataFrame({\n    \"Quantity\": [\"Estimated treatment effect\", \"Bootstrap SE\", \"Analytical SE\", \"95% CI lower\", \"95% CI upper\"],\n    \"Value\": [theta_hat, boot_se, analytic_se, ci_lower, ci_upper]\n})\n\nbootstrap_results\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nEstimated treatment effect\n0.038000\n\n\n1\nBootstrap SE\n0.017659\n\n\n2\nAnalytical SE\n0.017767\n\n\n3\n95% CI lower\n0.003388\n\n\n4\n95% CI upper\n0.072612\n\n\n\n\n\n\n\n\nplt.figure(figsize=(10, 5))\nplt.hist(boot_thetas, bins=30, edgecolor=\"black\")\nplt.axvline(theta_hat, linestyle=\"--\", label=\"Original estimate\")\nplt.xlabel(\"Bootstrap estimates of treatment effect\")\nplt.ylabel(\"Frequency\")\nplt.title(\"Bootstrap Distribution of the Estimated Treatment Effect\")\nplt.legend()\nplt.show()",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#the-central-limit-theorem",
+    "href": "blog/ab-testing-call-to-action.html#the-central-limit-theorem",
+    "title": "A/B Testing a Call to Action",
+    "section": "The Central Limit Theorem",
+    "text": "The Central Limit Theorem\nThe Central Limit Theorem explains why Normal-based statistical inference works so well in large samples. Even when the original data are not Normally distributed, the sampling distribution of the sample mean tends to become approximately Normal as the sample size gets larger. In this A/B test, the individual outcomes are Bernoulli, so the raw data are highly discrete. However, the estimated treatment effect can still have an approximately bell-shaped sampling distribution when the sample size is sufficiently large.\nTo illustrate this, I repeatedly simulate the estimated treatment effect at several different sample sizes. For each sample size, I generate many independent A/B tests, compute the difference in sample means, and then examine the distribution of those estimates.\n\nsample_sizes = [25, 50, 100, 500]\nn_sim = 1000\n\nfig, axes = plt.subplots(2, 2, figsize=(12, 8))\naxes = axes.flatten()\n\nfor ax, sample_n in zip(axes, sample_sizes):\n    theta_hats_sim = np.empty(n_sim)\n    \n    for i in range(n_sim):\n        A_sim = np.random.binomial(1, pi_A, sample_n)\n        B_sim = np.random.binomial(1, pi_B, sample_n)\n        theta_hats_sim[i] = A_sim.mean() - B_sim.mean()\n    \n    ax.hist(theta_hats_sim, bins=30, edgecolor=\"black\")\n    ax.axvline(0.04, linestyle=\"--\")\n    ax.set_title(f\"n = {sample_n}\")\n    ax.set_xlabel(\"Estimated treatment effect\")\n    ax.set_ylabel(\"Frequency\")\n\nplt.tight_layout()\nplt.show()",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#hypothesis-testing",
+    "href": "blog/ab-testing-call-to-action.html#hypothesis-testing",
+    "title": "A/B Testing a Call to Action",
+    "section": "Hypothesis Testing",
+    "text": "Hypothesis Testing\nA hypothesis test asks whether the observed difference in sign-up rates is large enough that it would be unlikely to occur just by random chance. In this A/B test, the null hypothesis is that the two CTAs perform equally well, while the alternative hypothesis is that they have different conversion rates:\n\\[\nH_0: \\theta = 0\n\\]\n\\[\nH_1: \\theta \\neq 0\n\\]\nUsing the estimated treatment effect and its standard error, I compute a z-statistic. Under the null hypothesis, this statistic is approximately Standard Normal in large samples, which allows me to calculate a two-sided p-value.\n\nz_stat = theta_hat / analytic_se\np_value = 2 * (1 - stats.norm.cdf(abs(z_stat)))\n\nhypothesis_results = pd.DataFrame({\n    \"Quantity\": [\"Estimated treatment effect\", \"Analytical SE\", \"z-statistic\", \"p-value\"],\n    \"Value\": [theta_hat, analytic_se, z_stat, p_value]\n})\n\nhypothesis_results\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nEstimated treatment effect\n0.038000\n\n\n1\nAnalytical SE\n0.017767\n\n\n2\nz-statistic\n2.138818\n\n\n3\np-value\n0.032450\n\n\n\n\n\n\n\nTo visualize the test, I compare the observed z-statistic to the Standard Normal distribution and mark the two-sided rejection regions at the 5% significance level.\n\nx = np.linspace(-4, 4, 500)\ny = stats.norm.pdf(x)\n\ncritical_value = stats.norm.ppf(0.975)\n\nplt.figure(figsize=(10, 5))\nplt.plot(x, y, label=\"Standard Normal density\")\nplt.axvline(z_stat, linestyle=\"--\", label=f\"Observed z = {z_stat:.2f}\")\nplt.axvline(-critical_value, linestyle=\":\", label=\"5% critical values\")\nplt.axvline(critical_value, linestyle=\":\")\nplt.xlabel(\"z\")\nplt.ylabel(\"Density\")\nplt.title(\"Hypothesis Test for the Treatment Effect\")\nplt.legend()\nplt.show()\n\n\n\n\n\n\n\n\nIf the p-value is below 0.05, I reject the null hypothesis and conclude that the data provide evidence of a difference in conversion rates between the two CTAs. If the p-value is above 0.05, I fail to reject the null hypothesis. In this simulation, the conclusion depends on the realized sample, but the test gives a formal way to judge whether the observed treatment effect is statistically distinguishable from zero.",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#the-t-test-as-a-regression",
+    "href": "blog/ab-testing-call-to-action.html#the-t-test-as-a-regression",
+    "title": "A/B Testing a Call to Action",
+    "section": "The T-Test as a Regression",
+    "text": "The T-Test as a Regression\nThe difference in means from an A/B test can also be written as a regression. To do this, I stack the two groups together into one dataset and create a treatment indicator equal to 1 for CTA A and 0 for CTA B. I then run the following regression:\n\\[\nY_i = \\beta_0 + \\beta_1 D_i + \\varepsilon_i\n\\]\nwhere \\(Y_i\\) is the sign-up outcome and \\(D_i\\) indicates whether the visitor saw CTA A. In this setup, the intercept \\(\\beta_0\\) is the mean outcome for group B, and the coefficient \\(\\beta_1\\) is the difference in mean outcomes between group A and group B. That means the regression coefficient on the treatment indicator should match the estimated treatment effect from the A/B test.\n\nimport statsmodels.api as sm\n\nreg_df = pd.DataFrame({\n    \"signup\": np.concatenate([A, B]),\n    \"treatment\": np.concatenate([np.ones(n), np.zeros(n)])\n})\n\nX = sm.add_constant(reg_df[\"treatment\"])\nreg_model = sm.OLS(reg_df[\"signup\"], X).fit()\n\nregression_results = pd.DataFrame({\n    \"Quantity\": [\"Difference in means\", \"Regression coefficient on treatment\", \"Regression SE\", \"Regression p-value\"],\n    \"Value\": [theta_hat, reg_model.params[\"treatment\"], reg_model.bse[\"treatment\"], reg_model.pvalues[\"treatment\"]]\n})\n\nregression_results\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nDifference in means\n0.038000\n\n\n1\nRegression coefficient on treatment\n0.038000\n\n\n2\nRegression SE\n0.017776\n\n\n3\nRegression p-value\n0.032658\n\n\n\n\n\n\n\nThe regression coefficient on the treatment indicator matches the difference in sample means, which confirms that the t-test and the regression are giving the same substantive result in this simple setting. This equivalence matters because regression provides a flexible framework: once the basic A/B test is written this way, it becomes easy to extend the analysis by adding controls, interactions, or additional treatment groups.\n\nreg_model.summary()\n\n\nOLS Regression Results\n\n\nDep. Variable:\nsignup\nR-squared:\n0.002\n\n\nModel:\nOLS\nAdj. R-squared:\n0.002\n\n\nMethod:\nLeast Squares\nF-statistic:\n4.570\n\n\nDate:\nMon, 20 Apr 2026\nProb (F-statistic):\n0.0327\n\n\nTime:\n00:44:31\nLog-Likelihood:\n-991.64\n\n\nNo. Observations:\n2000\nAIC:\n1987.\n\n\nDf Residuals:\n1998\nBIC:\n1998.\n\n\nDf Model:\n1\n\n\n\n\nCovariance Type:\nnonrobust\n\n\n\n\n\n\n\n\n\n\n\ncoef\nstd err\nt\nP&gt;|t|\n[0.025\n0.975]\n\n\nconst\n0.1780\n0.013\n14.161\n0.000\n0.153\n0.203\n\n\ntreatment\n0.0380\n0.018\n2.138\n0.033\n0.003\n0.073\n\n\n\n\n\n\n\n\nOmnibus:\n434.378\nDurbin-Watson:\n1.932\n\n\nProb(Omnibus):\n0.000\nJarque-Bera (JB):\n777.046\n\n\nSkew:\n1.518\nProb(JB):\n1.85e-169\n\n\nKurtosis:\n3.320\nCond. No.\n2.62\n\n\n\nNotes:[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n\n\nThe full regression output also shows that the treatment effect estimate, its standard error, and the p-value line up closely with the earlier hypothesis test results. In this example, regression is not changing the answer; it is simply expressing the same comparison in a more general statistical framework.",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "blog/ab-testing-call-to-action.html#the-problem-with-peeking",
+    "href": "blog/ab-testing-call-to-action.html#the-problem-with-peeking",
+    "title": "A/B Testing a Call to Action",
+    "section": "The Problem with Peeking",
+    "text": "The Problem with Peeking\nOne important problem in experimentation is peeking at the data too often. Suppose the true conversion rates are actually the same, so there is no real treatment effect. If I run a hypothesis test only once at the end of the experiment, the probability of a false positive is about 5% when I use a 5% significance level. But if I repeatedly check the results during the experiment and stop as soon as I see significance, the overall false positive rate becomes much larger.\nTo demonstrate this, I simulate many experiments under the null hypothesis where both CTAs have the same sign-up probability of 0.20. In each experiment, I check for significance after every 100 observations per group, up to 1,000 observations per group. If any of those interim tests is significant at the 5% level, I count the experiment as producing a false positive.\n\nnp.random.seed(123)\n\npi_null = 0.20\nn_total = 1000\ncheckpoints = np.arange(100, n_total + 1, 100)\nn_experiments = 10000\n\nfalse_positive_any = 0\n\nfor _ in range(n_experiments):\n    A_null = np.random.binomial(1, pi_null, n_total)\n    B_null = np.random.binomial(1, pi_null, n_total)\n    \n    rejected = False\n    \n    for m in checkpoints:\n        A_m = A_null[:m]\n        B_m = B_null[:m]\n        \n        theta_hat_m = A_m.mean() - B_m.mean()\n        se_m = np.sqrt(A_m.mean() * (1 - A_m.mean()) / m + B_m.mean() * (1 - B_m.mean()) / m)\n        \n        if se_m &gt; 0:\n            z_m = theta_hat_m / se_m\n            p_m = 2 * (1 - stats.norm.cdf(abs(z_m)))\n            \n            if p_m &lt; 0.05:\n                rejected = True\n                break\n    \n    if rejected:\n        false_positive_any += 1\n\nfalse_positive_rate = false_positive_any / n_experiments\n\npeeking_results = pd.DataFrame({\n    \"Quantity\": [\"Nominal significance level\", \"False positive rate with repeated peeking\"],\n    \"Value\": [0.05, false_positive_rate]\n})\n\npeeking_results\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nNominal significance level\n0.050\n\n\n1\nFalse positive rate with repeated peeking\n0.199\n\n\n\n\n\n\n\nTo make the comparison more intuitive, I also plot the nominal 5% level against the simulated false positive rate under repeated peeking.\n\ncomparison_df = pd.DataFrame({\n    \"Type\": [\"Nominal 5% level\", \"Repeated peeking false positive rate\"],\n    \"Rate\": [0.05, false_positive_rate]\n})\n\nplt.figure(figsize=(8, 5))\nplt.bar(comparison_df[\"Type\"], comparison_df[\"Rate\"], edgecolor=\"black\")\nplt.ylabel(\"Probability\")\nplt.title(\"False Positive Rate: Single Test vs. Repeated Peeking\")\nplt.show()\n\n\n\n\n\n\n\n\nThe simulation shows that repeated peeking makes false positives more likely. Even when there is no true difference between the two CTAs, checking the data over and over again creates more opportunities to incorrectly reject the null hypothesis. This is why classical hypothesis testing assumes that the testing plan is fixed in advance. If researchers want to monitor results during the experiment, they usually need special sequential testing methods rather than ordinary repeated hypothesis tests.",
+    "crumbs": [
+      "Blog",
+      "A/B Testing a Call to Action"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Lingyuan Meng",
+    "section": "",
+    "text": "UC San Diego MSBA\n\n\nBusiness Analytics | Strategy | Problem Solving\nI am an international student from China who has been studying in the United States since high school.\nMy cross-cultural experience has helped me develop adaptability, independence, and strong communication skills. I am especially interested in business analytics, strategy, and solving real-world problems with practical ideas and data-driven thinking."
+  },
+  {
+    "objectID": "index.html#beyond-academics",
+    "href": "index.html#beyond-academics",
+    "title": "Lingyuan Meng",
+    "section": "Beyond Academics",
+    "text": "Beyond Academics\nOutside of school and work, I enjoy playing video games with friends and staying active through outdoor sports. These activities help me stay balanced, curious, and connected with others."
+  },
+  {
+    "objectID": "index.html#current-focus",
+    "href": "index.html#current-focus",
+    "title": "Lingyuan Meng",
+    "section": "Current Focus",
+    "text": "Current Focus\nExploring opportunities in business analytics, consulting, and strategy-related roles.\n\nView Resume Visit Blog"
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "My Projects",
+    "section": "",
+    "text": "A/B Testing a Call to Action\n\n\n\n\n\n\nLingyuan Meng\n\n\nApr 15, 2026\n\n\n\n\n\n\nNo matching items"
   }
 ]

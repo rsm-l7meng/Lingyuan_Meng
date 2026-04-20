@@ -1,0 +1,30 @@
+{
+  "cells": [
+    {
+      "cell_type": "raw",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: A/B Testing a Call to Action\n",
+        "subtitle: Simulating Key Ideas from Classical Frequentist Statistics\n",
+        "author: Lingyuan Meng\n",
+        "date: April 15, 2026\n",
+        "format:\n",
+        "  html:\n",
+        "    toc: true\n",
+        "---"
+      ],
+      "id": "6ec1d6e5"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\mlyhj\\AppData\\Roaming\\Python\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

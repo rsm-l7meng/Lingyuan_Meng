@@ -13,5 +13,11 @@
   },
   "projects/project1/index.qmd": {
     "index.html": "87fec992"
+  },
+  "blog/ab-testing-call-to-action.qmd": {
+    "ab-testing-call-to-action.html": "4819fc67"
+  },
+  "blog/index.qmd": {
+    "index.html": "bd8cd8e0"
   }
 }
