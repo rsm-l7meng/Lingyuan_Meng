@@ -13,13 +13,14 @@ website:
       - text: Blog
         href: blog/index.qmd
 
-  sidebar:
-    - title: "Blog"
-      style: "docked"
-      search: false
-      contents:
-        - blog/index.qmd
-        - blog/ab-testing-call-to-action.qmd
+sidebar:
+  - title: "Blog"
+    style: "docked"
+    search: false
+    contents:
+      - blog/index.qmd
+      - blog/ab-testing-call-to-action.qmd
+      - blog/hw2-card-krueger.qmd
 
 format:
   html:

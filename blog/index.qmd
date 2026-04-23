@@ -3,7 +3,6 @@ title: "Blog"
 format: html
 ---
 
-# Blog
 
 Welcome to my blog. Here you can find my posts and course-related writing.
 
