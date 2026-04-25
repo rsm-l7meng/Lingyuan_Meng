@@ -238,3 +238,9 @@ The figure gives a visual version of the difference-in-differences result. Emplo
 ## Conclusion
 
 This replication reproduces the main pattern in Card and Krueger (1994). The descriptive results from Table 3 match the published values almost exactly, and the reduced-form regression from Table 4 column (i) is also very close to the reported estimate. Overall, my replication supports the paper’s main conclusion: the 1992 minimum wage increase in New Jersey did not reduce fast-food employment relative to Pennsylvania in this sample.
+
+### Suggested Clarification
+
+One thing that could further strengthen this analysis is a brief discussion of the identifying assumption behind the difference-in-differences approach. In particular, the method relies on the idea that employment trends in New Jersey and Pennsylvania would have followed a similar path in the absence of the policy change.
+
+Making this assumption more explicit could help readers better understand why the comparison between the two states can be interpreted as a causal effect, rather than just a simple difference in outcomes.
