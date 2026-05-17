@@ -3,3 +3,5 @@
 hw2_data/
 *.ipynb_checkpoints
 **/*.quarto_ipynb
+
+quarto-website/
