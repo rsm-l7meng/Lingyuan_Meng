@@ -261,7 +261,7 @@ window.Quarto = {
 \theta = 0.22 - 0.18 = 0.04
 \]</span></p>
 <p>Using these values, I simulate 1,000 visitors in each group and compare the observed conversion rates.</p>
-<div id="7d33b643" class="cell" data-execution_count="1">
+<div id="3aad7b97" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -318,7 +318,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="the-law-of-large-numbers">The Law of Large Numbers</h2>
 <p>The Law of Large Numbers says that as the sample size grows, the sample average gets closer to the true population average. In this A/B test, that means the estimated treatment effect should move closer to the true difference in conversion rates as more observations are included. With only a few observations, the estimate can fluctuate a lot, but with a larger sample it becomes more stable.</p>
 <p>To illustrate this, I compute the element-wise differences between the simulated outcomes in group A and group B, then calculate the cumulative average of those differences. If the Law of Large Numbers is working as expected, the running mean should gradually settle near the true treatment effect of 0.04.</p>
-<div id="da62451a" class="cell" data-execution_count="2">
+<div id="d7e79fce" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>diffs <span class="op">=</span> A <span class="op">-</span> B</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>running_mean <span class="op">=</span> np.cumsum(diffs) <span class="op">/</span> np.arange(<span class="dv">1</span>, n <span class="op">+</span> <span class="dv">1</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -343,7 +343,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="bootstrap-standard-errors">Bootstrap Standard Errors</h2>
 <p>A point estimate by itself does not tell us how precise the estimated treatment effect is. To measure uncertainty, I use the bootstrap. The basic idea is to repeatedly resample with replacement from the observed data in each group, recompute the estimated treatment effect each time, and then use the spread of those bootstrap estimates to approximate the standard error.</p>
 <p>I generate 1,000 bootstrap replications. In each replication, I sample 1,000 observations with replacement from group A and 1,000 observations with replacement from group B, then calculate the difference in sample means. The standard deviation of these bootstrap estimates is the bootstrap standard error.</p>
-<div id="977959fe" class="cell" data-execution_count="3">
+<div id="b2006d9b" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_boot <span class="op">=</span> <span class="dv">1000</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>boot_thetas <span class="op">=</span> np.empty(n_boot)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -409,7 +409,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="0866f800" class="cell" data-execution_count="4">
+<div id="41fbafca" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.hist(boot_thetas, bins<span class="op">=</span><span class="dv">30</span>, edgecolor<span class="op">=</span><span class="st">"black"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.axvline(theta_hat, linestyle<span class="op">=</span><span class="st">"--"</span>, label<span class="op">=</span><span class="st">"Original estimate"</span>)</span>
@@ -431,7 +431,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="the-central-limit-theorem">The Central Limit Theorem</h2>
 <p>The Central Limit Theorem explains why Normal-based statistical inference works so well in large samples. Even when the original data are not Normally distributed, the sampling distribution of the sample mean tends to become approximately Normal as the sample size gets larger. In this A/B test, the individual outcomes are Bernoulli, so the raw data are highly discrete. However, the estimated treatment effect can still have an approximately bell-shaped sampling distribution when the sample size is sufficiently large.</p>
 <p>To illustrate this, I repeatedly simulate the estimated treatment effect at several different sample sizes. For each sample size, I generate many independent A/B tests, compute the difference in sample means, and then examine the distribution of those estimates.</p>
-<div id="0da29191" class="cell" data-execution_count="5">
+<div id="5591cf79" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sample_sizes <span class="op">=</span> [<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">500</span>]</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_sim <span class="op">=</span> <span class="dv">1000</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -473,7 +473,7 @@ H_0: \theta = 0
 H_1: \theta \neq 0
 \]</span></p>
 <p>Using the estimated treatment effect and its standard error, I compute a z-statistic. Under the null hypothesis, this statistic is approximately Standard Normal in large samples, which allows me to calculate a two-sided p-value.</p>
-<div id="7703786a" class="cell" data-execution_count="6">
+<div id="4e77a495" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>z_stat <span class="op">=</span> theta_hat <span class="op">/</span> analytic_se</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> stats.norm.cdf(<span class="bu">abs</span>(z_stat)))</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -523,7 +523,7 @@ H_1: \theta \neq 0
 </div>
 </div>
 <p>To visualize the test, I compare the observed z-statistic to the Standard Normal distribution and mark the two-sided rejection regions at the 5% significance level.</p>
-<div id="e82c978f" class="cell" data-execution_count="7">
+<div id="70c89253" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">500</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> stats.norm.pdf(x)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -556,7 +556,7 @@ H_1: \theta \neq 0
 Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i
 \]</span></p>
 <p>where <span class="math inline">\(Y_i\)</span> is the sign-up outcome and <span class="math inline">\(D_i\)</span> indicates whether the visitor saw CTA A. In this setup, the intercept <span class="math inline">\(\beta_0\)</span> is the mean outcome for group B, and the coefficient <span class="math inline">\(\beta_1\)</span> is the difference in mean outcomes between group A and group B. That means the regression coefficient on the treatment indicator should match the estimated treatment effect from the A/B test.</p>
-<div id="f346cc26" class="cell" data-execution_count="8">
+<div id="84af1449" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>reg_df <span class="op">=</span> pd.DataFrame({</span>
@@ -613,7 +613,7 @@ Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i
 </div>
 </div>
 <p>The regression coefficient on the treatment indicator matches the difference in sample means, which confirms that the t-test and the regression are giving the same substantive result in this simple setting. This equivalence matters because regression provides a flexible framework: once the basic A/B test is written this way, it becomes easy to extend the analysis by adding controls, interactions, or additional treatment groups.</p>
-<div id="77141239" class="cell" data-execution_count="9">
+<div id="afa7f787" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>reg_model.summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <table class="simpletable caption-top table table-sm table-striped small">
@@ -645,7 +645,7 @@ Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">Time:</th>
-<td>14:22:20</td>
+<td>14:32:50</td>
 <th data-quarto-table-cell-role="th">Log-Likelihood:</th>
 <td>-991.64</td>
 </tr>
@@ -747,7 +747,7 @@ Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i
 <h2 class="anchored" data-anchor-id="the-problem-with-peeking">The Problem with Peeking</h2>
 <p>One important problem in experimentation is peeking at the data too often. Suppose the true conversion rates are actually the same, so there is no real treatment effect. If I run a hypothesis test only once at the end of the experiment, the probability of a false positive is about 5% when I use a 5% significance level. But if I repeatedly check the results during the experiment and stop as soon as I see significance, the overall false positive rate becomes much larger.</p>
 <p>To demonstrate this, I simulate many experiments under the null hypothesis where both CTAs have the same sign-up probability of 0.20. In each experiment, I check for significance after every 100 observations per group, up to 1,000 observations per group. If any of those interim tests is significant at the 5% level, I count the experiment as producing a false positive.</p>
-<div id="e2cc2c4d" class="cell" data-execution_count="10">
+<div id="1bb99b5a" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">123</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pi_null <span class="op">=</span> <span class="fl">0.20</span></span>
@@ -819,7 +819,7 @@ Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i
 </div>
 </div>
 <p>To make the comparison more intuitive, I also plot the nominal 5% level against the simulated false positive rate under repeated peeking.</p>
-<div id="41559130" class="cell" data-execution_count="11">
+<div id="f2d13d2b" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>comparison_df <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Type"</span>: [<span class="st">"Nominal 5</span><span class="sc">% le</span><span class="st">vel"</span>, <span class="st">"Repeated peeking false positive rate"</span>],</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Rate"</span>: [<span class="fl">0.05</span>, false_positive_rate]</span>

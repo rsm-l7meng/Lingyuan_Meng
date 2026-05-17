@@ -10,3 +10,4 @@ Welcome to my blog. Here you can find my posts and course-related writing.
 
 - [A/B Testing a Call to Action](ab-testing-call-to-action.qmd)
 - [Replicating Card and Krueger (1994): Minimum Wages and Employment](hw2-card-krueger.qmd)
+- [Does Blueprinty’s Software Help Firms Get More Patents?](blueprinty-poisson.qmd)

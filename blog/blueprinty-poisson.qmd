@@ -20,6 +20,7 @@ In this analysis, I use data from 1,500 mature engineering firms. The outcome va
 Before fitting the Poisson model, I first examine the main variables in the data. The dataset contains 1,500 mature engineering firms. The outcome variable is the number of patents awarded to each firm over the last five years. The key explanatory variable is whether the firm is a Blueprinty customer.
 
 ```{python}
+#| echo: false
 #| message: false
 #| warning: false
 
