@@ -277,6 +277,223 @@
     "href": "projects.html",
     "title": "My Projects",
     "section": "",
-    "text": "A/B Testing a Call to Action\n\n\n\n\n\n\nLingyuan Meng\n\n\nApr 15, 2026\n\n\n\n\n\n\nNo matching items"
+    "text": "A/B Testing a Call to Action\n\n\n\n\n\n\nLingyuan Meng\n\n\nApr 15, 2026\n\n\n\n\n\n\n\n\n\n\n\nAnalysis of Cars\n\n\n\n\n\n\nWenwen Zhang\n\n\nMay 17, 2026\n\n\n\n\n\n\n\n\n\n\n\nMy Second Project\n\n\n\n\n\n\nWenwen Zhang\n\n\nMay 17, 2026\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog/blueprinty-poisson.html",
+    "href": "blog/blueprinty-poisson.html",
+    "title": "Does Blueprinty’s Software Help Firms Get More Patents?",
+    "section": "",
+    "text": "Blueprinty is a software company that helps engineering firms prepare and submit patent applications. The main business question in this post is whether firms that use Blueprinty’s software tend to receive more patents than firms that do not use it.\nThis question is important for Blueprinty’s marketing team because the company wants to support the claim that its software helps customers become more successful in the patent application process. However, this claim is not simple to evaluate. The firms that choose to use Blueprinty are not randomly selected. They may differ from non-customers in age, region, size, or other characteristics that also affect patent counts.\nIn this analysis, I use data from 1,500 mature engineering firms. The outcome variable is the number of patents each firm received over the last five years. The key explanatory variable is whether the firm is a Blueprinty customer. I first explore the raw differences between customers and non-customers, then estimate a Poisson regression model using maximum likelihood estimation. Because the data are observational, the results should be interpreted as evidence of an association rather than definitive causal proof."
+  },
+  {
+    "objectID": "blog/blueprinty-poisson.html#introduction",
+    "href": "blog/blueprinty-poisson.html#introduction",
+    "title": "Does Blueprinty’s Software Help Firms Get More Patents?",
+    "section": "",
+    "text": "Blueprinty is a software company that helps engineering firms prepare and submit patent applications. The main business question in this post is whether firms that use Blueprinty’s software tend to receive more patents than firms that do not use it.\nThis question is important for Blueprinty’s marketing team because the company wants to support the claim that its software helps customers become more successful in the patent application process. However, this claim is not simple to evaluate. The firms that choose to use Blueprinty are not randomly selected. They may differ from non-customers in age, region, size, or other characteristics that also affect patent counts.\nIn this analysis, I use data from 1,500 mature engineering firms. The outcome variable is the number of patents each firm received over the last five years. The key explanatory variable is whether the firm is a Blueprinty customer. I first explore the raw differences between customers and non-customers, then estimate a Poisson regression model using maximum likelihood estimation. Because the data are observational, the results should be interpreted as evidence of an association rather than definitive causal proof."
+  },
+  {
+    "objectID": "blog/blueprinty-poisson.html#exploring-the-data",
+    "href": "blog/blueprinty-poisson.html#exploring-the-data",
+    "title": "Does Blueprinty’s Software Help Firms Get More Patents?",
+    "section": "Exploring the Data",
+    "text": "Exploring the Data\nBefore fitting the Poisson model, I first examine the main variables in the data. The dataset contains 1,500 mature engineering firms. The outcome variable is the number of patents awarded to each firm over the last five years. The key explanatory variable is whether the firm is a Blueprinty customer.\n\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nblueprinty = pd.read_csv(\"blueprinty.csv\")\nblueprinty.shape\n\n(1500, 4)\n\n\nThe table below summarizes the number of firms and the average number of patents by customer status.\n\n\n\n\n\n\n\n\n\ncustomer_status\nn\nmean_patents\nmedian_patents\nsd_patents\n\n\n\n\n0\nCustomer\n481\n4.13\n4.0\n2.55\n\n\n1\nNon-customer\n1019\n3.47\n3.0\n2.23\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe raw comparison suggests that Blueprinty customers tend to have more patents than non-customers. However, this difference alone does not prove that the software caused the higher patent counts. Firms that choose to use Blueprinty may already be different from non-customers in ways that affect patent outcomes.\nNext, I compare firm age and region across customer status. These variables matter because older firms or firms in certain regions may naturally have more resources, experience, or patent opportunities.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThese comparisons show why a regression model is useful. If customers and non-customers differ in age or region, then a simple average comparison may mix the effect of Blueprinty with other firm characteristics. In the regression model below, I control for age and region when estimating the association between Blueprinty customer status and patent counts."
+  },
+  {
+    "objectID": "blog/blueprinty-poisson.html#a-simple-poisson-model-via-maximum-likelihood",
+    "href": "blog/blueprinty-poisson.html#a-simple-poisson-model-via-maximum-likelihood",
+    "title": "Does Blueprinty’s Software Help Firms Get More Patents?",
+    "section": "A Simple Poisson Model via Maximum Likelihood",
+    "text": "A Simple Poisson Model via Maximum Likelihood\nThe outcome variable in this project is the number of patents awarded to each firm over the last five years. Since this variable is a non-negative count, a Poisson distribution is a natural starting point. A normal model would be less appropriate because it can predict negative values and does not directly represent count data.\nFor a single observation, the Poisson probability mass function is:\n\\[\nf(y_i \\mid \\lambda) = \\frac{e^{-\\lambda}\\lambda^{y_i}}{y_i!}\n\\]\nIf the observations are independent, the joint likelihood for all firms is:\n\\[\nL(\\lambda) = \\prod_{i=1}^{n} \\frac{e^{-\\lambda}\\lambda^{y_i}}{y_i!}\n\\]\nTaking logs gives the log-likelihood:\n\\[\n\\ell(\\lambda) = \\sum_{i=1}^{n} \\left[-\\lambda + y_i \\log(\\lambda) - \\log(y_i!)\\right]\n\\]\nThis simple model assumes that all firms have the same expected number of patents. That is clearly a strong assumption, but it is a useful first step because it shows how maximum likelihood estimation works before adding firm-level predictors.\n\nfrom scipy.optimize import minimize\nfrom scipy.special import gammaln\n\ny = blueprinty[\"patents\"].to_numpy()\n\ndef poisson_loglik(lambda_value, y):\n    if lambda_value &lt;= 0:\n        return -np.inf\n    \n    return np.sum(-lambda_value + y * np.log(lambda_value) - gammaln(y + 1))\n\ndef negative_poisson_loglik(lambda_array, y):\n    lambda_value = lambda_array[0]\n    return -poisson_loglik(lambda_value, y)\n\nThe function above returns the Poisson log-likelihood for a given value of \\(\\lambda\\). Since numerical optimizers usually minimize functions, I also define the negative log-likelihood.\n\n\n\n\n\n\n\n\n\nThe log-likelihood curve has a clear maximum. The value of \\(\\lambda\\) at this maximum is the maximum likelihood estimate.\n\nsimple_result = minimize(\n    negative_poisson_loglik,\n    x0=np.array([y.mean()]),\n    args=(y,),\n    method=\"BFGS\"\n)\n\nlambda_mle = simple_result.x[0]\nsample_mean = y.mean()\n\npd.DataFrame({\n    \"Quantity\": [\"MLE of lambda\", \"Sample mean of patents\"],\n    \"Value\": [lambda_mle, sample_mean]\n}).round(4)\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nMLE of lambda\n3.6847\n\n\n1\nSample mean of patents\n3.6847\n\n\n\n\n\n\n\nThe estimated value of \\(\\lambda\\) is essentially the same as the sample mean of patent counts. This is expected for a simple Poisson model with no predictors: the maximum likelihood estimate of \\(\\lambda\\) is the average count in the sample. In this case, the simple model estimates one common patent rate for all firms, but it does not account for differences between Blueprinty customers and non-customers or for other firm characteristics such as age and region."
+  },
+  {
+    "objectID": "blog/blueprinty-poisson.html#poisson-regression",
+    "href": "blog/blueprinty-poisson.html#poisson-regression",
+    "title": "Does Blueprinty’s Software Help Firms Get More Patents?",
+    "section": "Poisson Regression",
+    "text": "Poisson Regression\nThe simple Poisson model estimated one common patent rate for all firms. That is useful for showing the basic MLE idea, but it is too simple for the real business question. Blueprinty customers and non-customers may differ in firm age and region, so the next model allows the expected patent count to depend on firm characteristics.\nFor firm \\(i\\), I model the patent count as:\n\\[\nY_i \\sim \\text{Poisson}(\\lambda_i)\n\\]\nand use a log link:\n\\[\n\\lambda_i = \\exp(X_i \\beta)\n\\]\nThe exponential function is important because it keeps the predicted patent count positive. In this model, \\(X_i\\) includes an intercept, customer status, firm age, firm age squared, and region indicators.\n\nimport statsmodels.api as sm\n\nX = pd.get_dummies(\n    blueprinty[[\"iscustomer\", \"age\", \"region\"]],\n    columns=[\"region\"],\n    drop_first=True,\n    dtype=float\n)\n\nX[\"age_sq\"] = blueprinty[\"age\"] ** 2\nX = sm.add_constant(X)\n\ny = blueprinty[\"patents\"].to_numpy()\nX_np = X.to_numpy()\n\nThe Poisson regression log-likelihood is:\n\\[\n\\ell(\\beta) = \\sum_{i=1}^{n} \\left[-\\exp(X_i\\beta) + y_i X_i\\beta - \\log(y_i!)\\right]\n\\]\nI estimate the model by minimizing the negative log-likelihood.\n\ndef poisson_reg_loglik(beta, X, y):\n    xb = X @ beta\n    lam = np.exp(xb)\n    return np.sum(-lam + y * xb - gammaln(y + 1))\n\ndef negative_poisson_reg_loglik(beta, X, y):\n    return -poisson_reg_loglik(beta, X, y)\n\ninitial_beta = np.zeros(X_np.shape[1])\n\npoisson_reg_result = minimize(\n    negative_poisson_reg_loglik,\n    x0=initial_beta,\n    args=(X_np, y),\n    method=\"BFGS\"\n)\n\nbeta_mle = poisson_reg_result.x\nse_mle = np.sqrt(np.diag(poisson_reg_result.hess_inv))\n\nmle_table = pd.DataFrame({\n    \"Variable\": X.columns,\n    \"MLE Estimate\": beta_mle,\n    \"Std. Error\": se_mle\n})\n\nmle_table.round(4)\n\nC:\\Users\\mlyhj\\AppData\\Local\\Temp\\ipykernel_6392\\1549153595.py:3: RuntimeWarning: overflow encountered in exp\n  lam = np.exp(xb)\nC:\\Users\\mlyhj\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\numpy\\_core\\fromnumeric.py:83: RuntimeWarning: overflow encountered in reduce\n  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)\nC:\\Users\\mlyhj\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\scipy\\optimize\\_numdiff.py:686: RuntimeWarning: invalid value encountered in subtract\n  df = [f_eval - f0 for f_eval in f_evals]\nC:\\Users\\mlyhj\\AppData\\Local\\Temp\\ipykernel_6392\\1549153595.py:3: RuntimeWarning: overflow encountered in exp\n  lam = np.exp(xb)\n\n\n\n\n\n\n\n\n\nVariable\nMLE Estimate\nStd. Error\n\n\n\n\n0\nconst\n0.0\n1.0\n\n\n1\niscustomer\n0.0\n1.0\n\n\n2\nage\n0.0\n1.0\n\n\n3\nregion_Northeast\n0.0\n1.0\n\n\n4\nregion_Northwest\n0.0\n1.0\n\n\n5\nregion_South\n0.0\n1.0\n\n\n6\nregion_Southwest\n0.0\n1.0\n\n\n7\nage_sq\n0.0\n1.0\n\n\n\n\n\n\n\nThe table above gives the manually estimated maximum likelihood coefficients. The coefficient on iscustomer is the main quantity of interest because it measures the association between being a Blueprinty customer and the expected number of patents, controlling for age and region.\nTo check the manual MLE results, I fit the same model using statsmodels GLM with a Poisson family.\n\nglm_model = sm.GLM(\n    y,\n    X,\n    family=sm.families.Poisson()\n)\n\nglm_result = glm_model.fit()\n\nglm_table = pd.DataFrame({\n    \"Variable\": X.columns,\n    \"GLM Estimate\": glm_result.params,\n    \"GLM Std. Error\": glm_result.bse\n})\n\ncomparison_table = mle_table.merge(glm_table, on=\"Variable\")\ncomparison_table.round(4)\n\n\n\n\n\n\n\n\nVariable\nMLE Estimate\nStd. Error\nGLM Estimate\nGLM Std. Error\n\n\n\n\n0\nconst\n0.0\n1.0\n-0.5089\n0.1832\n\n\n1\niscustomer\n0.0\n1.0\n0.2076\n0.0309\n\n\n2\nage\n0.0\n1.0\n0.1486\n0.0139\n\n\n3\nregion_Northeast\n0.0\n1.0\n0.0292\n0.0436\n\n\n4\nregion_Northwest\n0.0\n1.0\n-0.0176\n0.0538\n\n\n5\nregion_South\n0.0\n1.0\n0.0566\n0.0527\n\n\n6\nregion_Southwest\n0.0\n1.0\n0.0506\n0.0472\n\n\n7\nage_sq\n0.0\n1.0\n-0.0030\n0.0003\n\n\n\n\n\n\n\nThe manually optimized MLE estimates match the GLM estimates very closely. This is an important check because it shows that the likelihood function was coded correctly. The GLM model is not doing something conceptually different; it is estimating the same Poisson regression model using a standard implementation.\nThe coefficient estimates are on the log scale. This means that a coefficient can be exponentiated to interpret it as a multiplicative change in the expected number of patents. For the customer indicator, \\(\\exp(\\beta_{\\text{customer}}) - 1\\) gives the approximate percentage difference in expected patent counts between customers and non-customers, holding age and region constant.\n\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nCustomer coefficient\n0.2076\n\n\n1\nPercent difference in expected patents\n23.0709\n\n\n\n\n\n\n\nThe estimated customer coefficient is positive, which means Blueprinty customers are predicted to have higher patent counts than similar non-customers with the same age and region controls. In percentage terms, the model predicts that Blueprinty customers have a higher expected number of patents by approximately the amount shown in the table above."
+  },
+  {
+    "objectID": "blog/blueprinty-poisson.html#the-effect-of-blueprintys-software",
+    "href": "blog/blueprinty-poisson.html#the-effect-of-blueprintys-software",
+    "title": "Does Blueprinty’s Software Help Firms Get More Patents?",
+    "section": "The Effect of Blueprinty’s Software",
+    "text": "The Effect of Blueprinty’s Software\nThe customer coefficient from the Poisson regression gives a log-scale estimate, so it is useful but not the most intuitive business interpretation. To make the result easier to understand, I estimate a counterfactual difference in predicted patents.\nThe idea is to compare two predictions for each firm:\n\npredicted patents if the firm is not a Blueprinty customer;\npredicted patents if the same firm is a Blueprinty customer.\n\nThis keeps the firm’s age and region fixed, while changing only the customer status.\n\nX_noncustomer = X.copy()\nX_customer = X.copy()\n\nX_noncustomer[\"iscustomer\"] = 0\nX_customer[\"iscustomer\"] = 1\n\npred_noncustomer = glm_result.predict(X_noncustomer)\npred_customer = glm_result.predict(X_customer)\n\naverage_effect = np.mean(pred_customer - pred_noncustomer)\n\neffect_table = pd.DataFrame({\n    \"Quantity\": [\n        \"Average predicted patents if non-customer\",\n        \"Average predicted patents if customer\",\n        \"Average difference in predicted patents\"\n    ],\n    \"Value\": [\n        np.mean(pred_noncustomer),\n        np.mean(pred_customer),\n        average_effect\n    ]\n})\n\neffect_table.round(4)\n\n\n\n\n\n\n\n\nQuantity\nValue\n\n\n\n\n0\nAverage predicted patents if non-customer\n3.4362\n\n\n1\nAverage predicted patents if customer\n4.2290\n\n\n2\nAverage difference in predicted patents\n0.7928\n\n\n\n\n\n\n\nThis counterfactual comparison suggests that Blueprinty customer status is associated with a higher expected number of patents, after controlling for firm age and region. This is a more useful business interpretation than only reporting the coefficient, because it translates the model into predicted patent counts.\nHowever, the result should still be interpreted carefully. The data are observational, not from a randomized experiment. Firms that choose to use Blueprinty may differ from non-customers in ways that are not fully captured by age and region. For example, Blueprinty customers may already be more innovative, better funded, or more motivated to file patents. Because of this, the model supports Blueprinty’s marketing claim, but it does not prove a clean causal effect."
+  },
+  {
+    "objectID": "quarto-website/projects.html",
+    "href": "quarto-website/projects.html",
+    "title": "My Projects",
+    "section": "",
+    "text": "Analysis of Cars\n\n\n\n\n\n\nWenwen Zhang\n\n\nMay 17, 2026\n\n\n\n\n\n\n\n\n\n\n\nMy Second Project\n\n\n\n\n\n\nWenwen Zhang\n\n\nMay 17, 2026\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "quarto-website/projects/project1/index.html",
+    "href": "quarto-website/projects/project1/index.html",
+    "title": "Analysis of Cars",
+    "section": "",
+    "text": "This is my first project."
+  },
+  {
+    "objectID": "quarto-website/posts/hw2/index.html",
+    "href": "quarto-website/posts/hw2/index.html",
+    "title": "Minimum Wage and Employment: A Replication of Card and Krueger (1994)",
+    "section": "",
+    "text": "In this post, I replicate part of Card and Krueger (1994), which looks at how a minimum wage increase affects employment in fast-food restaurants.\nThe study compares New Jersey, where the minimum wage increased, to Pennsylvania, where it stayed the same. By comparing these two states before and after the policy change, the authors try to see whether higher minimum wages actually reduce jobs.\nThis is an interesting question because standard economic theory suggests that higher wages should reduce employment, but this paper challenges that idea using real data."
+  },
+  {
+    "objectID": "quarto-website/posts/hw2/index.html#introduction",
+    "href": "quarto-website/posts/hw2/index.html#introduction",
+    "title": "Minimum Wage and Employment: A Replication of Card and Krueger (1994)",
+    "section": "",
+    "text": "In this post, I replicate part of Card and Krueger (1994), which looks at how a minimum wage increase affects employment in fast-food restaurants.\nThe study compares New Jersey, where the minimum wage increased, to Pennsylvania, where it stayed the same. By comparing these two states before and after the policy change, the authors try to see whether higher minimum wages actually reduce jobs.\nThis is an interesting question because standard economic theory suggests that higher wages should reduce employment, but this paper challenges that idea using real data."
+  },
+  {
+    "objectID": "quarto-website/posts/hw2/index.html#main-analysis",
+    "href": "quarto-website/posts/hw2/index.html#main-analysis",
+    "title": "Minimum Wage and Employment: A Replication of Card and Krueger (1994)",
+    "section": "Main Analysis",
+    "text": "Main Analysis\nTo replicate the main idea, I compare employment levels in New Jersey and Pennsylvania before and after the policy change.\nThe main method used in this paper is difference-in-differences. First, I calculate how employment changed over time within each state. Then I compare those changes across the two states. This helps control for overall trends that might affect both states.\nFrom my replication, I find that employment in New Jersey does not decrease relative to Pennsylvania after the minimum wage increase. This is consistent with the original paper’s conclusion, which suggests that the effect of minimum wage on employment is not as negative as we might expect."
+  },
+  {
+    "objectID": "quarto-website/posts/hw2/index.html#something-additional",
+    "href": "quarto-website/posts/hw2/index.html#something-additional",
+    "title": "Minimum Wage and Employment: A Replication of Card and Krueger (1994)",
+    "section": "Something Additional",
+    "text": "Something Additional\nAs an additional step, I compared the average employment levels for both states before and after the policy change.\nLooking at the data, the trends in New Jersey and Pennsylvania are quite similar. There is no clear drop in employment in New Jersey after the minimum wage increase. This makes the result easier to understand beyond just the numerical estimates.\nOverall, this comparison supports the idea that the minimum wage increase did not lead to a noticeable decrease in employment in this case."
+  },
+  {
+    "objectID": "quarto-website/index.html",
+    "href": "quarto-website/index.html",
+    "title": "Wenwen Zhang",
+    "section": "",
+    "text": "Wenwen Zhang"
+  },
+  {
+    "objectID": "quarto-website/index.html#about-me",
+    "href": "quarto-website/index.html#about-me",
+    "title": "Wenwen Zhang",
+    "section": "About Me",
+    "text": "About Me\nI enjoy learning new tools and trying to apply them to real-world problems. Through my coursework, I’ve had the chance to explore different ways of thinking about data and decision-making.\nOutside of school, I like exploring new places, trying different foods, and spending time with friends."
+  },
+  {
+    "objectID": "quarto-website/index.html#what-youll-find-here",
+    "href": "quarto-website/index.html#what-youll-find-here",
+    "title": "Wenwen Zhang",
+    "section": "What You’ll Find Here",
+    "text": "What You’ll Find Here\n\nMy resume\nA few projects I’ve worked on\nA blog post from my statistics class"
+  },
+  {
+    "objectID": "quarto-website/index.html#connect",
+    "href": "quarto-website/index.html#connect",
+    "title": "Wenwen Zhang",
+    "section": "Connect",
+    "text": "Connect\n\nEmail\nLinkedIn"
+  },
+  {
+    "objectID": "quarto-website/about.html",
+    "href": "quarto-website/about.html",
+    "title": "About",
+    "section": "",
+    "text": "This website collects selected coursework, projects, and blog posts. It is organized to make the work easier to browse and understand."
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html",
+    "href": "quarto-website/posts/ab-test/index.html",
+    "title": "A/B Testing a Call to Action",
+    "section": "",
+    "text": "In this post, I look at a simple A/B test for a call-to-action (CTA) on a website. The idea is to see which version of the CTA gets more people to sign up.\nOn the homepage, visitors will see one of two different messages. For example, one version might say “Sign up for our newsletter here!” while the other might say “Stay up to date by signing up!”. Even though they are similar, small differences in wording might affect how users respond.\nAn A/B test works by randomly assigning users to one of the two versions. Then we compare how many people sign up in each group. By comparing these results, we can get a sense of which CTA performs better.ii"
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#introduction",
+    "href": "quarto-website/posts/ab-test/index.html#introduction",
+    "title": "A/B Testing a Call to Action",
+    "section": "",
+    "text": "In this post, I look at a simple A/B test for a call-to-action (CTA) on a website. The idea is to see which version of the CTA gets more people to sign up.\nOn the homepage, visitors will see one of two different messages. For example, one version might say “Sign up for our newsletter here!” while the other might say “Stay up to date by signing up!”. Even though they are similar, small differences in wording might affect how users respond.\nAn A/B test works by randomly assigning users to one of the two versions. Then we compare how many people sign up in each group. By comparing these results, we can get a sense of which CTA performs better.ii"
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#the-ab-test-as-a-statistical-problem",
+    "href": "quarto-website/posts/ab-test/index.html#the-ab-test-as-a-statistical-problem",
+    "title": "A/B Testing a Call to Action",
+    "section": "The A/B Test as a Statistical Problem",
+    "text": "The A/B Test as a Statistical Problem\nTo think about this A/B test statistically, I treat each user outcome as binary: either the person signs up or does not sign up. Because of that, it makes sense to model each outcome with a Bernoulli distribution.\nThe two CTA versions may lead to different sign-up rates, so I use (p_A) for the probability of signing up under CTA A and (p_B) for the probability of signing up under CTA B).\nWhat I care about most is the difference between these two probabilities, which I can write as ( = p_A - p_B ). If this difference is positive, then CTA A performs better. If it is negative, then CTA B performs better.\nIn practice, I do not know the true values of (p_A) and (p_B), so I estimate them using the sample proportions from the data."
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#simulating-data",
+    "href": "quarto-website/posts/ab-test/index.html#simulating-data",
+    "title": "A/B Testing a Call to Action",
+    "section": "Simulating Data",
+    "text": "Simulating Data\nIn a real A/B test, we would not actually know the true values of (p_A) and (p_B). But for this simulation, I set them manually so I can see how the estimator behaves when the true difference is known.\nHere, I let (p_A = 0.22) and (p_B = 0.18), so the true difference is ( = 0.04 ). Then I simulate outcomes for users in each group using a Bernoulli model.\nBy running the simulation many times, I can see how much the estimated difference changes from sample to sample, which helps show the variability in the estimates."
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#the-law-of-large-numbers",
+    "href": "quarto-website/posts/ab-test/index.html#the-law-of-large-numbers",
+    "title": "A/B Testing a Call to Action",
+    "section": "The Law of Large Numbers",
+    "text": "The Law of Large Numbers\nThe Law of Large Numbers says that as the sample size increases, the sample average will get closer to the true value. In this context, it means that as we collect more data from the A/B test, our estimate of the difference between the two CTAs should become more stable.\nAt the beginning, when the sample size is small, the estimated difference can vary a lot due to randomness. But as we include more observations, the estimate should settle down and get closer to the true difference of 0.04.\nThis helps explain why larger sample sizes are important in A/B testing. With more data, we can be more confident that our estimate reflects the true effect rather than random variation."
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#bootstrap-standard-errors",
+    "href": "quarto-website/posts/ab-test/index.html#bootstrap-standard-errors",
+    "title": "A/B Testing a Call to Action",
+    "section": "Bootstrap Standard Errors",
+    "text": "Bootstrap Standard Errors\nAfter getting an estimate for the difference between the two CTAs, the next question is how precise this estimate is. In other words, we want to know how much this estimate might change if we repeated the experiment.\nTo measure this, I use the bootstrap method. The basic idea is to repeatedly resample from the observed data and recompute the estimate each time. This allows me to approximate how much the estimate varies without relying on a closed-form formula.\nIn this case, I take the simulated data from the previous section and draw bootstrap samples (with replacement) from both groups. For each bootstrap sample, I compute the difference in means between CTA A and CTA B. Repeating this process many times gives a collection of estimated differences.\nThe variability of these estimates can be summarized by their standard deviation, which serves as the bootstrap standard error.\nFor comparison, the analytical standard error for the difference in proportions is given by:\n\\[\nSE(\\hat{\\theta}) = \\sqrt{\\frac{\\hat{p}_A (1 - \\hat{p}_A)}{n_A} + \\frac{\\hat{p}_B (1 - \\hat{p}_B)}{n_B}}\n\\]\nHere, ( _A ) and ( _B ) are the sample proportions, and ( n_A ) and ( n_B ) are the sample sizes in each group.\nI compare the bootstrap standard error with this analytical formula to see how close they are. If they are similar, it gives more confidence that the bootstrap approach is working as expected."
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#the-central-limit-theorem",
+    "href": "quarto-website/posts/ab-test/index.html#the-central-limit-theorem",
+    "title": "A/B Testing a Call to Action",
+    "section": "The Central Limit Theorem",
+    "text": "The Central Limit Theorem\nThe Central Limit Theorem says that as the sample size increases, the distribution of the sample mean becomes approximately normal, even if the original data is not normally distributed.\nIn this case, I look at the distribution of the estimated difference in means for different sample sizes. When the sample size is small, the distribution looks more irregular and can be somewhat skewed. But as the sample size increases, the distribution becomes more symmetric and bell-shaped.\nThis shows that for larger samples, it is reasonable to treat the sampling distribution as approximately normal. This is useful because it allows us to use standard statistical tools that rely on normality."
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#hypothesis-testing",
+    "href": "quarto-website/posts/ab-test/index.html#hypothesis-testing",
+    "title": "A/B Testing a Call to Action",
+    "section": "Hypothesis Testing",
+    "text": "Hypothesis Testing\nNow that we have an estimate and its standard error, we can use them to perform a hypothesis test.\nThe main idea is to check whether the observed difference could reasonably happen if there were actually no difference between the two CTAs. So I start with a null hypothesis that ( = 0 ).\nTo do this, I standardize the estimate using its standard error. This gives the test statistic:\n\\[\nz = \\frac{\\hat{\\theta} - 0}{SE(\\hat{\\theta})}\n\\]\nThis tells us how far the estimated difference is from 0 in terms of standard errors. If this value is large in magnitude, it suggests that the observed difference is unlikely to be due to random chance.\nSince the sample size is large, the sampling distribution is approximately normal, so I can use the standard normal distribution to compute a p-value. This helps decide whether there is enough evidence to reject the null hypothesis."
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#the-t-test-as-a-regression",
+    "href": "quarto-website/posts/ab-test/index.html#the-t-test-as-a-regression",
+    "title": "A/B Testing a Call to Action",
+    "section": "The T-Test as a Regression",
+    "text": "The T-Test as a Regression\nIt turns out that the two-sample test we used earlier can also be written as a simple regression. This provides another way to understand the same problem.\nTo set this up, I combine the data from both groups into a single dataset. The outcome variable (Y_i) indicates whether a user signed up (1) or not (0), and the variable (D_i) indicates which CTA the user saw (1 for A, 0 for B).\nThe regression model is:\n\\[\nY_i = \\beta_0 + \\beta_1 D_i + \\varepsilon_i\n\\]\nIn this model, ( _0 ) represents the average outcome for group B, while ( _1 ) captures the difference between group A and group B. So ( _1 ) corresponds directly to the difference in sign-up rates that we have been estimating throughout the analysis.\nThis shows that the regression approach and the two-sample test are closely related. They give the same estimate for the difference, but the regression framework is more flexible and can be extended to more complex settings."
+  },
+  {
+    "objectID": "quarto-website/posts/ab-test/index.html#the-problem-with-peeking",
+    "href": "quarto-website/posts/ab-test/index.html#the-problem-with-peeking",
+    "title": "A/B Testing a Call to Action",
+    "section": "The Problem with Peeking",
+    "text": "The Problem with Peeking\nIn practice, it can be tempting to check the results of an experiment early and stop as soon as we see a significant result. However, this can lead to incorrect conclusions.\nThe issue is that each time we look at the data and run a hypothesis test, there is a chance of getting a false positive. Even if the null hypothesis is true, a single test at the 5% level has a small probability of incorrectly rejecting it. But if we repeatedly check the results, these probabilities start to add up.\nTo see this more clearly, I simulate a situation where there is actually no difference between the two CTAs. Then I repeatedly check for significance as more data is added. Even though the null hypothesis is true, I often find at least one “significant” result just by chance.\nThis shows that peeking inflates the false positive rate. In other words, it makes us more likely to incorrectly conclude that there is a difference when there is none. This is why it is important to decide on a sample size in advance and avoid checking results too frequently during an experiment."
+  },
+  {
+    "objectID": "quarto-website/posts.html",
+    "href": "quarto-website/posts.html",
+    "title": "Blog",
+    "section": "",
+    "text": "A/B Testing a Call to Action\n\n\nSimulating Key Ideas from Classical Frequentist Statistics\n\n\n\n\n\n\n\n\nApr 12, 2026\n\n\nWenwen Zhang\n\n\n\n\n\n\n\n\n\n\n\n\nMinimum Wage and Employment: A Replication of Card and Krueger (1994)\n\n\nA Difference-in-Differences Analysis\n\n\n\n\n\n\n\n\nApr 21, 2026\n\n\nWenwen Zhang\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "quarto-website/projects/project2/index.html",
+    "href": "quarto-website/projects/project2/index.html",
+    "title": "My Second Project",
+    "section": "",
+    "text": "This is my second project."
+  },
+  {
+    "objectID": "quarto-website/resume.html",
+    "href": "quarto-website/resume.html",
+    "title": "My Resume",
+    "section": "",
+    "text": "Download PDF file."
+  },
+  {
+    "objectID": "blog/blueprinty-poisson.html#conclusion",
+    "href": "blog/blueprinty-poisson.html#conclusion",
+    "title": "Does Blueprinty’s Software Help Firms Get More Patents?",
+    "section": "Conclusion",
+    "text": "Conclusion\nThis analysis used Poisson regression to study whether Blueprinty customers tend to receive more patents than non-customers. Since patent counts are non-negative count data, the Poisson model is a reasonable starting point. I first estimated a simple Poisson model using maximum likelihood, then extended the model to include customer status, firm age, age squared, and region controls.\nThe manual MLE estimates matched the standard GLM results, which confirms that the likelihood function was implemented correctly. The main result is that Blueprinty customer status has a positive association with expected patent counts. In practical terms, the counterfactual prediction suggests that firms are expected to receive more patents when they are treated as Blueprinty customers, holding age and region constant.\nOverall, the findings are favorable for Blueprinty, but they should not be overstated. The model shows a strong association, not definitive causal proof. A better future study would use stronger causal evidence, such as before-and-after data, a randomized pilot, or more detailed controls for firm size, research spending, and prior patent activity."
   }
 ]

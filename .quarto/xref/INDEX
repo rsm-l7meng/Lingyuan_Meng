@@ -19,5 +19,41 @@
   },
   "blog/index.qmd": {
     "index.html": "bd8cd8e0"
+  },
+  "blog/blog/hw2-card-krueger.qmd": {
+    "hw2-card-krueger.html": "a61c26b8"
+  },
+  "blog/hw2-card-krueger.qmd": {
+    "hw2-card-krueger.html": "346b049e"
+  },
+  "blog/blueprinty-poisson.qmd": {
+    "blueprinty-poisson.html": "9ca9a037"
+  },
+  "quarto-website/about.qmd": {
+    "about.html": "ce5e2072"
+  },
+  "quarto-website/index.qmd": {
+    "index.html": "ce5fee59"
+  },
+  "quarto-website/posts/ab-test/index.qmd": {
+    "index.html": "a33862ea"
+  },
+  "quarto-website/posts/hw2/index.qmd": {
+    "index.html": "d5339ba4"
+  },
+  "quarto-website/posts.qmd": {
+    "posts.html": "ab4aecaa"
+  },
+  "quarto-website/projects/project1/index.qmd": {
+    "index.html": "236f7e64"
+  },
+  "quarto-website/projects/project2/index.qmd": {
+    "index.html": "61232241"
+  },
+  "quarto-website/projects.qmd": {
+    "projects.html": "d9fb747d"
+  },
+  "quarto-website/resume.qmd": {
+    "resume.html": "cee6c3b9"
   }
 }

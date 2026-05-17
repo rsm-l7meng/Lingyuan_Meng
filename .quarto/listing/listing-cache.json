@@ -2,6 +2,12 @@
   "listingMap": {
     "projects.qmd": [
       "projects"
+    ],
+    "quarto-website\\posts.qmd": [
+      "posts"
+    ],
+    "quarto-website\\projects.qmd": [
+      "projects"
     ]
   }
 }

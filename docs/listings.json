@@ -2,7 +2,23 @@
   {
     "listing": "/projects.html",
     "items": [
-      "/projects/project1/index.html"
+      "/projects/project1/index.html",
+      "/quarto-website/projects/project1/index.html",
+      "/quarto-website/projects/project2/index.html"
+    ]
+  },
+  {
+    "listing": "/quarto-website/projects.html",
+    "items": [
+      "/quarto-website/projects/project1/index.html",
+      "/quarto-website/projects/project2/index.html"
+    ]
+  },
+  {
+    "listing": "/quarto-website/posts.html",
+    "items": [
+      "/quarto-website/posts/ab-test/index.html",
+      "/quarto-website/posts/hw2/index.html"
     ]
   }
 ]
