@@ -1,15 +1,15 @@
 [
   {
-    "listing": "/projects.html",
+    "listing": "/quarto-website/projects.html",
     "items": [
-      "/projects/project1/index.html",
       "/quarto-website/projects/project1/index.html",
       "/quarto-website/projects/project2/index.html"
     ]
   },
   {
-    "listing": "/quarto-website/projects.html",
+    "listing": "/projects.html",
     "items": [
+      "/projects/project1/index.html",
       "/quarto-website/projects/project1/index.html",
       "/quarto-website/projects/project2/index.html"
     ]
