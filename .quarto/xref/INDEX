@@ -55,5 +55,11 @@
   },
   "quarto-website/resume.qmd": {
     "resume.html": "cee6c3b9"
+  },
+  "blog/maxdiff-mnl.qmd": {
+    "maxdiff-mnl.html": "6ffd9025"
+  },
+  "hw4_questions.qmd": {
+    "hw4_questions.html": "ac4ee320"
   }
 }
