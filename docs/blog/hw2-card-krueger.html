@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-05-31">
+<meta name="dcterms.date" content="2026-06-12">
 
 <title>Replicating Card and Krueger (1994) – Lingyuan Meng</title>
 <style>
@@ -176,7 +176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 31, 2026</p>
+      <p class="date">June 12, 2026</p>
     </div>
   </div>
   
@@ -196,7 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="load-packages" class="level2">
 <h2 class="anchored" data-anchor-id="load-packages">Load packages</h2>
-<div id="ec9e0683" class="cell" data-execution_count="1">
+<div id="83b00b16" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
@@ -206,7 +206,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="load-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-the-data">Load the data</h2>
-<div id="3481f9a4" class="cell" data-execution_count="2">
+<div id="0dc577da" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_path <span class="op">=</span> Path(<span class="vs">r"C:/Users/mlyhj/Desktop/Lingyuan_Meng/hw2_data/public</span><span class="dv">.</span><span class="vs">dat"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data_path.exists(), data_path)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -447,7 +447,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="quick-checks" class="level2">
 <h2 class="anchored" data-anchor-id="quick-checks">Quick checks</h2>
-<div id="0ab4424e" class="cell" data-execution_count="3">
+<div id="ca42b894" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.shape)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">"state"</span>].value_counts(dropna<span class="op">=</span><span class="va">False</span>).sort_index())</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[[<span class="st">"sheet"</span>, <span class="st">"chain"</span>, <span class="st">"state"</span>, <span class="st">"empft"</span>, <span class="st">"emppt"</span>, <span class="st">"nmgrs"</span>, <span class="st">"empft2"</span>, <span class="st">"emppt2"</span>, <span class="st">"nmgrs2"</span>, <span class="st">"status2"</span>]].head(<span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -473,7 +473,7 @@ Name: count, dtype: int64
 </section>
 <section id="construct-key-variables" class="level2">
 <h2 class="anchored" data-anchor-id="construct-key-variables">Construct key variables</h2>
-<div id="1b1dfbe4" class="cell" data-execution_count="4">
+<div id="61e073c4" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"fte_before"</span>] <span class="op">=</span> df[<span class="st">"empft"</span>] <span class="op">+</span> df[<span class="st">"nmgrs"</span>] <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> df[<span class="st">"emppt"</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"fte_after"</span>] <span class="op">=</span> df[<span class="st">"empft2"</span>] <span class="op">+</span> df[<span class="st">"nmgrs2"</span>] <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> df[<span class="st">"emppt2"</span>]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -614,7 +614,7 @@ Name: count, dtype: int64
 </section>
 <section id="check-wave-2-values" class="level2">
 <h2 class="anchored" data-anchor-id="check-wave-2-values">Check wave 2 values</h2>
-<div id="11ebc9f0" class="cell" data-execution_count="5">
+<div id="b43da75c" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[[<span class="st">"status2"</span>, <span class="st">"empft2"</span>, <span class="st">"emppt2"</span>, <span class="st">"nmgrs2"</span>, <span class="st">"fte_after"</span>]].head(<span class="dv">10</span>))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">"status2"</span>].value_counts(dropna<span class="op">=</span><span class="va">False</span>).sort_index())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -642,7 +642,7 @@ Name: count, dtype: int64</code></pre>
 </section>
 <section id="replicate-table-3-first-three-columns-and-first-three-rows" class="level2">
 <h2 class="anchored" data-anchor-id="replicate-table-3-first-three-columns-and-first-three-rows">Replicate Table 3: first three columns and first three rows</h2>
-<div id="2e181807" class="cell" data-execution_count="6">
+<div id="b119bc42" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pa_before <span class="op">=</span> df.loc[df[<span class="st">"state_name"</span>] <span class="op">==</span> <span class="st">"PA"</span>, <span class="st">"fte_before"</span>].mean()</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>nj_before <span class="op">=</span> df.loc[df[<span class="st">"state_name"</span>] <span class="op">==</span> <span class="st">"NJ"</span>, <span class="st">"fte_before"</span>].mean()</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -717,7 +717,7 @@ Name: count, dtype: int64</code></pre>
 </section>
 <section id="replicate-table-4-column-i" class="level2">
 <h2 class="anchored" data-anchor-id="replicate-table-4-column-i">Replicate Table 4 column (i)</h2>
-<div id="f907c916" class="cell" data-execution_count="7">
+<div id="5d62a374" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>reg_df <span class="op">=</span> df.loc[</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"fte_change"</span>].notna()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">&amp;</span> df[<span class="st">"wage_st"</span>].notna()</span>
@@ -777,7 +777,7 @@ Name: count, dtype: int64</code></pre>
 <h2 class="anchored" data-anchor-id="compare-with-the-published-value">Compare with the published value</h2>
 <p>The published Table 4 column (i) reports a coefficient of about 2.33 with a standard error of 1.19. My replication produces a coefficient of 2.28 with a standard error of 1.19, which is very close to the published result.</p>
 <p>The small difference in the point estimate is likely due to minor sample-definition differences in the public-use data, especially in how missing wave-2 wage information and store status are handled. Still, the replicated result leads to the same conclusion as the original paper: employment in New Jersey did not fall relative to Pennsylvania after the minimum wage increase. ## Additional analysis: a simple DID plot</p>
-<div id="9401fee3" class="cell" data-fig-height="5" data-fig-width="7" data-execution_count="8">
+<div id="c8f8e435" class="cell" data-fig-height="5" data-fig-width="7" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"State"</span>: [<span class="st">"PA"</span>, <span class="st">"PA"</span>, <span class="st">"NJ"</span>, <span class="st">"NJ"</span>],</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Period"</span>: [<span class="st">"Before"</span>, <span class="st">"After"</span>, <span class="st">"Before"</span>, <span class="st">"After"</span>],</span>

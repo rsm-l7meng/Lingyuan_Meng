@@ -109,10 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
-
-
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
-
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -237,7 +234,7 @@ window.Quarto = {
 </section>
 <section id="the-data" class="level2">
 <h2 class="anchored" data-anchor-id="the-data">The Data</h2>
-<div id="a9df3bbf" class="cell" data-execution_count="1">
+<div id="82306038" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -350,7 +347,7 @@ window.Quarto = {
 </div>
 <p>The survey data contains one row for each class shown in each MaxDiff task. The response variable is coded as <code>1</code> if the class was selected as the most preferred option, <code>-1</code> if it was selected as the least preferred option, and <code>0</code> if it was shown but not selected.</p>
 <p>In the raw file, I first check the task structure. The assignment focuses on the 10 MSBA class items. The raw data also contains some extra rows involving item 11, so I remove those rows and keep only complete MaxDiff tasks that show four of the 10 classes and contain one best choice and one worst choice.</p>
-<div id="790e4e0c" class="cell" data-execution_count="2">
+<div id="27fef431" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>raw_task_check <span class="op">=</span> (</span>
@@ -460,7 +457,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="8a8d1b00" class="cell" data-execution_count="3">
+<div id="b0f06198" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep the actual 10-item MaxDiff tasks required for the assignment</span></span>
@@ -558,7 +555,7 @@ window.Quarto = {
 </div>
 </div>
 <p>I also check whether every retained MaxDiff task has the expected structure: one best pick, one worst pick, and two unselected options.</p>
-<div id="c09bdfe6" class="cell" data-execution_count="4">
+<div id="f77e5edd" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sanity_check <span class="op">=</span> (</span>
@@ -637,7 +634,7 @@ window.Quarto = {
 </div>
 </div>
 <p>This check is important because the later MNL model assumes that each task has one clear best choice and one clear worst choice. After filtering to the 10 class items and complete tasks, the data follows the expected MaxDiff structure.</p>
-<div id="f13652a4" class="cell" data-execution_count="5">
+<div id="b23420ee" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>exposure_table <span class="op">=</span> (</span>
@@ -740,7 +737,7 @@ window.Quarto = {
 \text{score}_j = \%\text{best}_j - \%\text{worst}_j
 \]</span></p>
 <p>A positive score means a class was more often selected as best than worst. A negative score means it was more often selected as worst. A score close to zero means the class is closer to the middle or has mixed reactions.</p>
-<div id="c25473fa" class="cell" data-execution_count="6">
+<div id="a6c80c92" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>counts_table <span class="op">=</span> (</span>
@@ -916,7 +913,7 @@ window.Quarto = {
 </div>
 </div>
 <p>I also calculate bootstrap confidence intervals for the counts score by resampling respondents with replacement.</p>
-<div id="bb5241b8" class="cell" data-execution_count="7">
+<div id="69d0530a" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">123</span>)</span>
@@ -1136,7 +1133,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="9a3630d3" class="cell" data-execution_count="8">
+<div id="4b75bb33" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plot_counts <span class="op">=</span> counts_table.sort_values(<span class="st">"score"</span>, ascending<span class="op">=</span><span class="va">True</span>)</span>
@@ -1168,7 +1165,7 @@ window.Quarto = {
 </div>
 </div>
 <p>The counts analysis gives a quick first look at student preferences. The classes at the top were selected as best more often when shown, while the classes at the bottom were selected as worst more often. This method is easy to understand, but it is mostly descriptive. It does not fully model the choice process behind the best and worst selections.</p>
-<div id="98615b1b" class="cell" data-execution_count="9">
+<div id="ee74be77" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>top_counts <span class="op">=</span> counts_table.iloc[<span class="dv">0</span>]</span>
@@ -1197,7 +1194,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 \frac{\exp(-\beta_w)}{\sum_{j \in \text{shown}, j \neq b} \exp(-\beta_j)}
 \]</span></p>
 <p>One important issue is identifiability. Adding the same constant to every <span class="math inline">\(\beta\)</span> does not change the MNL probabilities. Because of that, I set <span class="math inline">\(\beta_1 = 0\)</span> as the reference class and estimate the other nine coefficients.</p>
-<div id="9c413118" class="cell" data-execution_count="10">
+<div id="63e46d0a" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>task_rows <span class="op">=</span> []</span>
@@ -1291,7 +1288,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 \right]
 \]</span></p>
 <p>Here, <span class="math inline">\(j_b^*\)</span> is the item selected as best, and <span class="math inline">\(j_w^*\)</span> is the item selected as worst.</p>
-<div id="6e333880" class="cell" data-execution_count="11">
+<div id="b03d5865" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>shown_list <span class="op">=</span> task_data[<span class="st">"shown"</span>].tolist()</span>
@@ -1328,7 +1325,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 <span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span>loglike(beta_free)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="864f57ee" class="cell" data-execution_count="12">
+<div id="a02e59bb" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>start_beta <span class="op">=</span> np.zeros(<span class="dv">9</span>)</span>
@@ -1518,7 +1515,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 </div>
 </div>
 </div>
-<div id="480a557d" class="cell" data-execution_count="13">
+<div id="856eebd7" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>plot_mle <span class="op">=</span> mle_table.sort_values(<span class="st">"mle_share"</span>, ascending<span class="op">=</span><span class="va">True</span>)</span>
@@ -1540,7 +1537,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 </div>
 </div>
 <p>The MLE estimates are easier to interpret after converting the coefficients into shares of preference. These shares sum to 1 across the 10 classes. Compared with the counts analysis, the MNL method uses the full structure of each choice task. It considers not only which item was selected, but also the other items that were shown and not selected.</p>
-<div id="000e8ea0" class="cell" data-execution_count="14">
+<div id="09b6b723" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>top_mle <span class="op">=</span> mle_table.iloc[<span class="dv">0</span>]</span>
@@ -1563,7 +1560,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 \boldsymbol{\beta} \sim N(0, 10I)
 \]</span></p>
 <p>This prior is centered at zero and is wide enough to let the data drive the estimates. I use a random-walk Metropolis-Hastings sampler. The proposal adds normal noise to the current vector of nine free coefficients.</p>
-<div id="2d3e53c4" class="cell" data-execution_count="15">
+<div id="ad5cbc09" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_prior(beta_free):</span>
@@ -1598,7 +1595,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 <span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="9d7c0ecf" class="cell" data-execution_count="16">
+<div id="fa832444" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">123</span>)</span>
@@ -1636,7 +1633,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 </div>
 </div>
 <p>The acceptance rate is shown above. A reasonable target is usually around 25% to 40%. If the acceptance rate is too low, the proposal step is probably too large. If it is too high, the proposal step is probably too small.</p>
-<div id="1f9d0b2f" class="cell" data-execution_count="17">
+<div id="502a7c73" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>burn_in <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.25</span> <span class="op">*</span> mh_out[<span class="st">"draws"</span>].shape[<span class="dv">0</span>])</span>
@@ -1653,7 +1650,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 <pre><code>(15000, 10)</code></pre>
 </div>
 </div>
-<div id="5523b0ef" class="cell" data-execution_count="18">
+<div id="f0f9db31" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>trace_df <span class="op">=</span> pd.DataFrame(</span>
@@ -1683,7 +1680,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 </div>
 </div>
 <p>The trace plots are used to check whether the chain is moving around a stable region instead of drifting slowly in one direction. In this run, the traces should look like a fuzzy band after the burn-in period.</p>
-<div id="06f3998a" class="cell" data-execution_count="19">
+<div id="fc2c1ae6" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>posterior_beta <span class="op">=</span> post_draws_full.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
@@ -1877,7 +1874,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 </div>
 </div>
 </div>
-<div id="f0075590" class="cell" data-execution_count="20">
+<div id="39eaf4a0" class="cell" data-execution_count="20">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>plot_bayes <span class="op">=</span> bayes_table.sort_values(<span class="st">"bayes_share"</span>, ascending<span class="op">=</span><span class="va">True</span>)</span>
@@ -1909,7 +1906,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 </div>
 </div>
 <p>The Bayesian posterior means are close to the maximum likelihood estimates, which makes sense because both methods use the same likelihood. The main benefit of the Bayesian approach is that it gives uncertainty intervals for derived quantities like shares of preference in a direct way. Instead of using an extra approximation, I can calculate shares for every MCMC draw and then summarize the distribution.</p>
-<div id="e2252b3f" class="cell" data-execution_count="21">
+<div id="1b08eb39" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>top_bayes <span class="op">=</span> bayes_table.iloc[<span class="dv">0</span>]</span>
@@ -1928,7 +1925,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 <section id="comparing-the-three-methods" class="level2">
 <h2 class="anchored" data-anchor-id="comparing-the-three-methods">Comparing the Three Methods</h2>
 <p>The last step is to compare the simple counts analysis, MLE MNL, and Bayesian MNL side by side.</p>
-<div id="250a014d" class="cell" data-execution_count="22">
+<div id="c9ad1c87" class="cell" data-execution_count="22">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>comparison_table <span class="op">=</span> (</span>
@@ -2077,7 +2074,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 </div>
 </div>
 </div>
-<div id="c6b78b5f" class="cell" data-execution_count="23">
+<div id="f5237c33" class="cell" data-execution_count="23">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">3</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">13</span>))</span>
@@ -2111,7 +2108,7 @@ P(\text{worst}=w \mid \text{best}=b) =
 </div>
 <p>Overall, the three methods tell a similar story. They tend to agree most clearly at the top and bottom of the ranking. The biggest differences usually appear in the middle, where several classes have similar preference levels and small changes in the model can switch the order.</p>
 <p>The counts method is useful because it is simple and easy to explain. The MLE MNL method adds a more formal model of how students made choices across different sets of classes. The Bayesian MNL method adds a more natural way to describe uncertainty, especially for shares of preference.</p>
-<div id="c2d01f36" class="cell" data-execution_count="24">
+<div id="9d6ee2b9" class="cell" data-execution_count="24">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>top_row <span class="op">=</span> comparison_table.sort_values(<span class="st">"mle_rank"</span>).iloc[<span class="dv">0</span>]</span>
