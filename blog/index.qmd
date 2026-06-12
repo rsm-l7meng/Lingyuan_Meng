@@ -12,3 +12,4 @@ Welcome to my blog. Here you can find my posts and course-related writing.
 - [Replicating Card and Krueger (1994): Minimum Wages and Employment](hw2-card-krueger.qmd)
 - [Does Blueprinty’s Software Help Firms Get More Patents?](blueprinty-poisson.qmd)
 - [MaxDiff Analysis of MSBA Class Preferences](maxdiff-mnl.html)
+- [HW5: Variable Importance](hw5-key-drivers.qmd)

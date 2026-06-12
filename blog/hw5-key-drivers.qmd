@@ -1,0 +1,252 @@
+---
+title: "HW5: Variable Importance"
+author: "Lingyuan Meng"
+date: today
+categories: [Python, Variable Importance, Key Drivers]
+format:
+  html:
+    toc: true
+    toc-depth: 2
+jupyter: python3
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## Introduction
+
+In this homework, I use the customer satisfaction survey data to compare different variable importance methods. The response variable is `satisfaction`, and the predictors are the perception variables about the credit card.
+
+I did not use `brand` or `id` in the driver model. `id` is only an identifier, and `brand` is not one of the perception statements. The main goal is to see which perceptions are most strongly related to customer satisfaction.
+
+The methods I use are Pearson correlations, standardized regression coefficients, drop-one usefulness, Shapley values, Johnson's relative weights, and random forest mean decrease in Gini. I omit polychoric correlations because they are optional in the assignment.
+
+```{python}
+import pandas as pd
+import numpy as np
+
+from itertools import combinations
+from math import factorial
+from functools import lru_cache
+
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestClassifier
+```
+
+## Load the data
+
+```{python}
+df = pd.read_csv("data_for_drivers_analysis.csv")
+
+y_col = "satisfaction"
+
+x_cols = [
+    "trust",
+    "build",
+    "differs",
+    "easy",
+    "appealing",
+    "rewarding",
+    "popular",
+    "service",
+    "impact"
+]
+
+labels = {
+    "trust": "Is offered by a brand I trust",
+    "build": "Helps build credit quickly",
+    "differs": "Is different from other cards",
+    "easy": "Is easy to use",
+    "appealing": "Has appealing benefits or rewards",
+    "rewarding": "Rewards me for responsible usage",
+    "popular": "Is used by a lot of people",
+    "service": "Provides outstanding customer service",
+    "impact": "Makes a difference in my life"
+}
+
+data = df[[y_col] + x_cols].dropna().copy()
+
+X = data[x_cols]
+y = data[y_col]
+
+df.shape
+```
+
+The data has 2,553 rows and 12 columns. I use `satisfaction` as the outcome variable and the nine perception variables as predictors.
+
+## Variable importance calculations
+
+To make the methods easier to compare, I converted every method into percentages that sum to 100.
+
+```{python}
+def normalize_to_100(values):
+    values = pd.Series(values, dtype=float)
+    total = values.sum()
+    
+    if total == 0:
+        return values
+    
+    return values / total * 100
+```
+
+### Pearson correlations
+
+Pearson correlation is the simplest method. It looks at the relationship between each predictor and satisfaction one at a time.
+
+```{python}
+pearson = normalize_to_100({
+    c: abs(np.corrcoef(data[c], y)[0, 1])
+    for c in x_cols
+})
+```
+
+### Standardized regression coefficients
+
+For this method, I standardized the predictors and the outcome first. Then I fit a linear regression model and used the absolute values of the coefficients.
+
+```{python}
+X_std = (X - X.mean()) / X.std(ddof=0)
+y_std = (y - y.mean()) / y.std(ddof=0)
+
+lm_std = LinearRegression()
+lm_std.fit(X_std, y_std)
+
+std_coef = normalize_to_100(
+    pd.Series(np.abs(lm_std.coef_), index=x_cols)
+)
+```
+
+### Drop-one usefulness
+
+Drop-one usefulness checks how much the full model's R-squared drops when one variable is removed.
+
+```{python}
+def r2_score_for(cols):
+    if len(cols) == 0:
+        return 0.0
+    
+    model = LinearRegression()
+    model.fit(data[list(cols)], y)
+    return model.score(data[list(cols)], y)
+
+full_r2 = r2_score_for(tuple(x_cols))
+
+drop_one_raw = {}
+
+for c in x_cols:
+    reduced_cols = tuple([v for v in x_cols if v != c])
+    drop_one_raw[c] = full_r2 - r2_score_for(reduced_cols)
+
+drop_one = normalize_to_100(drop_one_raw)
+```
+
+### Shapley values
+
+Shapley values split the model R-squared across variables. For each variable, I calculate its average added contribution across all possible model combinations.
+
+```{python}
+@lru_cache(None)
+def cached_r2(cols_tuple):
+    cols = list(cols_tuple)
+    
+    if len(cols) == 0:
+        return 0.0
+    
+    model = LinearRegression()
+    model.fit(data[cols], y)
+    return model.score(data[cols], y)
+
+p = len(x_cols)
+shapley_raw = {}
+
+for c in x_cols:
+    others = [v for v in x_cols if v != c]
+    value = 0.0
+    
+    for k in range(len(others) + 1):
+        for subset in combinations(others, k):
+            subset = tuple(sorted(subset))
+            with_c = tuple(sorted(subset + (c,)))
+            
+            weight = factorial(k) * factorial(p - k - 1) / factorial(p)
+            marginal_gain = cached_r2(with_c) - cached_r2(subset)
+            
+            value += weight * marginal_gain
+    
+    shapley_raw[c] = value
+
+shapley = normalize_to_100(shapley_raw)
+```
+
+### Johnson's relative weights
+
+Johnson's relative weights are another way to split explained variance across predictors. This method is useful because predictors in survey data are often correlated with each other.
+
+```{python}
+corr_x = X.corr().values
+corr_xy = np.array([np.corrcoef(X[c], y)[0, 1] for c in x_cols])
+
+eigenvalues, eigenvectors = np.linalg.eigh(corr_x)
+eigenvalues = np.clip(eigenvalues, 0, None)
+
+sqrt_corr = eigenvectors @ np.diag(np.sqrt(eigenvalues)) @ eigenvectors.T
+beta = np.linalg.pinv(sqrt_corr) @ corr_xy
+
+johnson_raw = (sqrt_corr ** 2) @ (beta ** 2)
+johnson = normalize_to_100(pd.Series(johnson_raw, index=x_cols))
+```
+
+### Random forest mean decrease in Gini
+
+For the random forest method, I treat satisfaction as a classification target. The importance scores come from the decrease in Gini impurity.
+
+```{python}
+rf = RandomForestClassifier(
+    n_estimators=500,
+    random_state=1,
+    criterion="gini",
+    max_features=1
+)
+
+rf.fit(X, y)
+
+rf_importance = normalize_to_100(
+    pd.Series(rf.feature_importances_, index=x_cols)
+)
+```
+
+## Final variable importance table
+
+```{python}
+result = pd.DataFrame({
+    "Perception": [labels[c] for c in x_cols],
+    "Pearson Correlations": pearson[x_cols].values,
+    "Standardized Regression Coef.": std_coef[x_cols].values,
+    "Drop-One Usefulness": drop_one[x_cols].values,
+    "LMG / Shapley Values": shapley[x_cols].values,
+    "Johnson's Relative Weights": johnson[x_cols].values,
+    "RF Mean Decrease Gini": rf_importance[x_cols].values
+})
+
+result_display = result.copy()
+
+for col in result_display.columns[1:]:
+    result_display[col] = result_display[col].map(lambda x: f"{x:.1f}%")
+
+result_display.set_index("Perception")
+```
+
+## Interpretation
+
+The results are not exactly the same across all methods, but the main pattern is still pretty clear. The strongest drivers are usually `impact`, `trust`, and `service`. These variables are about whether the card makes a difference in the customer's life, whether the customer trusts the brand, and whether the card provides strong customer service.
+
+Pearson correlation is easy to read, but it looks at each predictor separately. Because of that, it does not fully adjust for overlap between the perception variables.
+
+The regression-based methods are more useful for looking at unique contribution. In the standardized coefficient and drop-one usefulness columns, `impact` and `trust` become especially important. This means they explain more unique variation in satisfaction after the other variables are already included.
+
+The Shapley values and Johnson's relative weights are my preferred results here. They divide the model's explained variance across the variables in a more balanced way. These two methods also give similar results, so I think the conclusion is more stable.
+
+The random forest column is flatter than the regression-based columns. I think this may happen because the predictors are binary variables, so the tree model has less detail to split on. I would not use the random forest column alone for the final business conclusion, but it is still useful as another comparison.
+
+Overall, if the company wants to improve satisfaction, the most important areas to focus on are making the card feel meaningful in customers' lives, building trust in the brand, and improving customer service.
